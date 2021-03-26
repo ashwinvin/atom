@@ -12,12 +12,25 @@ class GManagement(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.command()
-    async def ban(self, ctx, users: typing.List[discord.Member], *reason):
+    async def ban(self, ctx, users: commands.Greedy[discord.Member], *reason: str):
         try:
             for user in users:
-                await user.ban(reason=reason)
+                await user.ban(reason=''.join(reason))
             await ctx.send(
-                f"Banned {[f'**{a.name}#{a.discriminator}**' for a in users]}"
+                f"Banned {''.join([f'**{a.name}#{a.discriminator}**' for a in users])} \n Reason {''.join(reason)}"
+            )
+        except discord.Forbidden:
+            await ctx.send(f"Looks like I don't have the Permission to do that :(")
+
+    @commands.has_permissions(ban_members=True)
+    @commands.bot_has_guild_permissions(kick_members=True)
+    @commands.command()
+    async def kick(self, ctx, users: commands.Greedy[discord.Member], *reason: str):
+        try:
+            for user in users:
+                await user.kick(reason=''.join(reason))
+            await ctx.send(
+                f"Kicked {[f'**{a.name}#{a.discriminator}**' for a in users]} \n Reason {''.join(reason)}"
             )
         except discord.Forbidden:
             await ctx.send(f"Looks like I don't have the Permission to do that :(")
@@ -25,31 +38,24 @@ class GManagement(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.command()
-    async def kick(self, ctx, users: typing.List[discord.Member], *reason):
+    async def unban(self, ctx, users: commands.Greedy[int]):
         try:
             for user in users:
-                await user.kick(reason=reason)
+                member = discord.Object(id=user) # user ID
+                try:
+                    await ctx.guild.unban(user=member)
+                except discord.NotFound:
+                    check = discord.utils.find(lambda member: member.id == user, ctx.guild.members)
+                    if check:
+                        await ctx.send(f"{check.mention} is not banned!")
             await ctx.send(
-                f"Kicked {[f'**{a.name}#{a.discriminator}**' for a in users]}"
-            )
-        except discord.Forbidden:
-            await ctx.send(f"Looks like I don't have the Permission to do that :(")
-
-    @commands.has_permissions(ban_members=True)
-    @commands.bot_has_guild_permissions(ban_members=True)
-    @commands.command()
-    async def unban(self, ctx, users: typing.List[int]):
-        try:
-            for user in users:
-                await ctx.guild.unban(user=user)
-            await ctx.send(
-                f"Banned {[f'**{a.name}#{a.discriminator}**' for a in users]}"
+                f"Unbanned {''.join([f'**{a.name}#{a.discriminator}**' for a in users])}"
             )
         except discord.Forbidden:
             await ctx.send(f"Looks like I don't have the Permission to do that :(")
 
     @commands.command(help="Used to lock a channel")
-    @commands.has_permissions(administrator=True)
+    @commands.has_permissions(manage_channels=True)
     async def lock(self, ctx, channel: discord.TextChannel):
         roles = ctx.guild.roles
         lock_embed = self.bot.embed(
@@ -64,7 +70,7 @@ class GManagement(commands.Cog):
             )
 
     @commands.command(help="Used to unlock a channel after its been locked")
-    @commands.has_permissions(administrator=True)
+    @commands.has_permissions(manage_channels=True)
     async def unlock(self, ctx, channel: discord.TextChannel):
         roles = ctx.guild.roles
         lock_embed = self.bot.embed(
