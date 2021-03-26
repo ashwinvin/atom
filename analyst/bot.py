@@ -31,7 +31,9 @@ class CEmbed(discord.Embed):
         super().__init__(*args, **kwargs)
         self.timestamp = datetime.now()
         self.color = 0x2F3136
-
+        self.set_image(
+            url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif"
+        )
 
 class Analyst(commands.Bot):
     def __init__(self, *args, **kwargs):
