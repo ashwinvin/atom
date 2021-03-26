@@ -79,7 +79,7 @@ class Analyst(commands.Bot):
             async with self.db.acquire() as conn:
                 async with conn.transaction():
                     id = await self.db.fetchrow(
-                        "INSERT INTO  errors(url, type) VALUES($1, $2) RETURNING id, url;",
+                        "INSERT INTO  errors(url, type, fixed) VALUES($1, $2, false) RETURNING id, url;",
                         paste["key"],
                         type(exc).__name__,
                     )
