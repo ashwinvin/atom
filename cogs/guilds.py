@@ -22,8 +22,9 @@ class GManagement(commands.Cog):
         description = ""
         for member in ctx.guild.members:
             if member.bot:
-                description += f"{member.mention} joined at {str(member.joined_at)}" 
+                description += f"{member.mention} joined at {str(member.joined_at.strftime('%Y:%m:%d'))} \n" 
                 pass
+            
         embed = self.bot.embed(title=f"Bots in {ctx.guild.name}", description=description)
         await ctx.send(embed=embed)
         
