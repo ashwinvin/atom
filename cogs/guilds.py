@@ -18,6 +18,16 @@ class GManagement(commands.Cog):
         await msg.add_reaction("⬇️")
 
     @commands.command()
+    async def bots(self, ctx):
+        description = ""
+        for member in ctx.guild.members:
+            if member.bot:
+                description += f"{member.mention} joined at {str(member.joined_at)}" 
+                pass
+        embed = self.bot.embed(title=f"Bots in {ctx.guild.name}", description=description)
+        await ctx.send(embed=embed)
+        
+    @commands.command()
     async def info(
         self,
         ctx: commands.Context,
