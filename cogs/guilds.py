@@ -3,19 +3,22 @@ import typing
 from discord.ext import commands
 
 
-class GManagement(commands.Cog):
+class GuildManagement(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.has_permissions(administrator=True)
     @commands.command()
-    async def poll(self, ctx, *description: str):
-        poll_embed = discord.Embed(
-            title="Poll", color=0x008000, description=description
+    async def poll(self, ctx, description: str, choice1: str, choice2: str ):
+        """"""
+        description = f"{description} \n \n \U0001f170 {choice1} \n \U0001f171 {choice2}" 
+        poll_embed = self.bot.embed(
+            title="Poll", color=0x77fc03, description="".join(description), colorful=False
         )
-        msg: discord.Message = await ctx.send(embed=poll_embed)
-        await msg.add_reaction("⬆️")
-        await msg.add_reaction("⬇️")
+        poll_embed.set_footer(text=f"Poll started by {ctx.author.name}")
+        msg = await ctx.send(embed=poll_embed)
+        await msg.add_reaction("\U0001f170")
+        await msg.add_reaction("\U0001f171")
 
     @commands.command()
     async def bots(self, ctx):
@@ -56,4 +59,4 @@ class GManagement(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(GManagement(bot))
+    bot.add_cog(GuildManagement(bot))
