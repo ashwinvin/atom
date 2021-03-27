@@ -1,3 +1,4 @@
+from re import I
 import discord
 from discord.ext import commands
 from datetime import datetime
@@ -27,19 +28,23 @@ def loadall(bot):
 
 
 class CEmbed(discord.Embed):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, colorful=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.timestamp = datetime.now()
         self.color = 0x2F3136
-        self.set_image(
-            url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif"
-        )
+        if colorful:
+            self.set_image(
+                url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif"
+            )
 
 class Analyst(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.embed = CEmbed
         self.db = kwargs.get("db")
+        self.dev_guild = kwargs.get("dev_guild")
+        self.error_channel = kwargs.get("error_channel")
+
 
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
@@ -92,13 +97,8 @@ class Analyst(commands.Bot):
                 description=f"An error has poped up. It has been reported to the dev!!",
             )
         )
-        if not hasattr(
-            self,
-            "owner",
-        ):
-            info = await self.application_info()
-            self.owner = info.owner
-        await self.owner.send(
+        channel =self.get_channel(int(self.error_channel))
+        await channel.send(
             embed=self.embed(
                 title="Error !!",
                 description=f"An error has been registered with id {dict(id)['id']} and has been uploaded [here]({'https://just-paste.it/'+dict(id)['url']})",
