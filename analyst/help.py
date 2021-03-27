@@ -8,7 +8,7 @@ class AnalystHelp(commands.HelpCommand):
 
     async def send_bot_help(self, mapping):
         hembed = self.context.bot.embed(title="Help") 
-        hembed.set_footer("Made By Shahad!!")
+        hembed.set_footer(text="Made By Shahad!!")
         for cog, commands in mapping.items():
             command_signatures = [self.get_command_signature(c) for c in commands]
             if command_signatures:  
