@@ -19,6 +19,7 @@ loadall(bot)
 
 @bot.event
 async def on_ready():
+    logger.info(f"Invite me using {discord.utils.oauth_url(bot.id)}")
     logger.info(f"Bot is and ready to use! I can see {len(bot.guilds)} guilds.")
 
 
