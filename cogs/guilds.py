@@ -51,7 +51,7 @@ class GuildManagement(commands.Cog):
                 value=f"Text Channels: {len(ctx.guild.text_channels)} \n Voice Channels{len(ctx.guild.voice_channels)}",
             )
             embed.add_field(
-                name="Emojis", value="".join([str(a) for a in ctx.guild.emojis])
+                name="Emojis", value=f"Total {len(ctx.guild.emoji)} emojis"
             )
             embed.add_field(name="Roles", value=len(ctx.guild.roles))
             embed.set_thumbnail(url=ctx.guild.icon_url)
