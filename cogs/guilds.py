@@ -6,6 +6,14 @@ from discord.ext import commands
 class GuildManagement(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.afkers = {}
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author.id in self.afkers.keys():
+            await message.channel.send(embed=self.bot.embed(description=f"Welcome back {message.author.mention}", colorful=False))
+            await message.author.edit(nick=message.author.nick[5:])
+            self.afkers.pop(message.author.id)
 
     @commands.has_permissions(administrator=True)
     @commands.command()
@@ -19,6 +27,14 @@ class GuildManagement(commands.Cog):
         msg = await ctx.send(embed=poll_embed)
         await msg.add_reaction("\U0001f170")
         await msg.add_reaction("\U0001f171")
+
+    @commands.command()
+    async def afk(self, ctx, *reason: typing.Optional[str]):
+        if not reason:
+            reason = "Unknown"
+        self.afkers[ctx.author.id] = "".join(reason)
+        await ctx.send(self.bot.embed(description=f"I have set your afk status to {''.join(reason)}", colorful=False))
+        await ctx.author.edit(nick=f"[AFK]{ctx.author.displayname}")
 
     @commands.command()
     async def bots(self, ctx):
