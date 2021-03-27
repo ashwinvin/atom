@@ -94,7 +94,7 @@ class Analyst(commands.Bot):
         await ctx.send(
             embed=self.embed(
                 title="Damn Error",
-                description=f"An error has poped up. It has been reported to the dev!!",
+                description=f"An error has poped up. It has been reported to the shahad!!",
             )
         )
         channel =self.get_channel(int(self.error_channel))
