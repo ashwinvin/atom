@@ -37,7 +37,7 @@ class SampUtils(commands.Cog):
             )
 
     async def get_samp_ip_port(self, id):
-        async with self.db.acquire() as conn:
+        async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 gdata = await conn.fetchrow("SELECT samp_port, samp_ip FROM guilds WHERE gid=$1;", id)
         return gdata
