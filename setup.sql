@@ -8,6 +8,7 @@ CREATE TABLE errors (id SERIAL PRIMARY KEY,
 
 CREATE TABLE guilds (id SERIAL PRIMARY KEY,
                     gid INT NOT NULL,
-                    samp TEXT NOT NULL,
-                    sbchannel INT NOT NULL,
-                    sbmin INT NOT NULL);
+                    samp_ip TEXT,
+                    samp_port INT,
+                    sbchannel INT ,
+                    sbmin INT);
