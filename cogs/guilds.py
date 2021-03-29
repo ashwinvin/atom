@@ -13,13 +13,13 @@ class GuildManagement(commands.Cog):
     async def on_message(self, message: discord.Message):
         if message.author.id in self.afkers.keys():
             self.afkers.pop(message.author.id)
-            print(self.afkers)
             await message.channel.send(embed=self.bot.embed(description=f"Welcome back {message.author.mention}", colorful=False))
             try:
                 await message.author.edit(nick=message.author.display_name[5:])
             except discord.Forbidden:
                 await message.channel.send("Failed to change your nickname!! Permissions Denied!!", delete_after=10)
-        # elif message.mentions 
+        elif n := discord.utils.find(lambda n: n.id in self.afkers.keys(), message.mentions):
+            await message.reply(embed=self.bot.embed(description=f"Sorry but `{n.display_name}` is afk \n Reason:```{self.afkers[n.id]}```"))
 
     @commands.has_permissions(administrator=True)
     @commands.command()
