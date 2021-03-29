@@ -66,10 +66,9 @@ class SampUtils(commands.Cog):
             gdata = await self.get_samp_ip_port(ctx.guild.id)
             request = functools.partial(get_samp_data, gdata['samp_ip'],gdata['samp_port'])
             results = await self.bot.loop.run_in_executor(None, request)
-            print(results)
-            embed = self.bot.embed(title="Samp Status", description=f"```{type(results)}```", colorful=False)
-            # embed.add_field(name="Players", value=f"{len(results[1])} Players Online")
-            # embed.add_field(name="Average Ping", value=f"{int(statistics.mean([a.ping for a in results[1]]))} ms")
+            embed = self.bot.embed(title="Samp Status", description=f"```{results[1].hostname}```", colorful=False)
+            embed.add_field(name="Players", value=f"{len(results[0])} Players Online")
+            embed.add_field(name="Average Ping", value=f"{int(statistics.mean([a.ping for a in results[0]]))} ms")
             await ctx.reply(embed=embed)
 
     @commands.cooldown(1, 3, BucketType.guild)
