@@ -55,7 +55,7 @@ class DevTools(commands.Cog):
         description = ""
         await first.delete()
         for cog in temp:
-            description += f"\n Reloaded {cog} <:on1:824388581433933896>"
+            description += f"\n <:on1:824388581433933896> Reloaded {cog} "
         if description != "":
             await ctx.send(embed=self.bot.embed(description=description))
         else:
