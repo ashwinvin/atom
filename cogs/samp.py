@@ -19,10 +19,9 @@ class SampPlayers(menus.ListPageSource):
 
     async def format_page(self, menu, entries):
         offset = menu.current_page * self.per_page
-        embed = discord.Embed(title="Samp Players", description='\n'.join(f'{i}. {v.name}  `ping {v.ping}ms` ' for i, v in enumerate(entries, start=offset)))
-        embed.set_footer(text=f"{len(self.entries)}/100  with an average ping of {int(statistics.mean([a.ping for a in self.entries[0]]))} ms")
-        return 
-
+        embed = discord.Embed(title="Samp Players", description='\n'.join(f'{i}. {v.name}  `ping {v.ping}ms` ' for i, v in enumerate(entries, start=offset)), color=0x2F3136)
+        embed.set_footer(text="Shahad Uyir")
+        return embed
 
 
 class SampUtils(commands.Cog):
@@ -82,7 +81,6 @@ class SampUtils(commands.Cog):
             request = functools.partial(get_samp_data, gdata['samp_ip'], gdata['samp_port'])
             results = await self.bot.loop.run_in_executor(None, request)
             players = [a for a in results[0]]
-            # embed = self.bot.embed(title="Samp Players", description=f"```{results.hostname}```", colorful=False)
             smenus = menus.MenuPages(source=SampPlayers(players), clear_reactions_after=True)
             await smenus.start(ctx)
 
