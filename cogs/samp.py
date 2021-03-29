@@ -19,7 +19,9 @@ class SampPlayers(menus.ListPageSource):
 
     async def format_page(self, menu, entries):
         offset = menu.current_page * self.per_page
-        return discord.Embed(title="Samp Players", description='\n'.join(f'{i}. {v.name}  `ping {v.ping}ms` ' for i, v in enumerate(entries, start=offset)))
+        embed = discord.Embed(title="Samp Players", description='\n'.join(f'{i}. {v.name}  `ping {v.ping}ms` ' for i, v in enumerate(entries, start=offset)))
+        embed.set_footer(text=f"{len(self.entries)}/100  with an average ping of {int(statistics.mean([a.ping for a in self.entries[0]]))} ms")
+        return 
 
 
 
