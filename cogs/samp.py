@@ -47,7 +47,7 @@ class SampUtils(commands.Cog):
     async def set(self, ctx, ip: str, port: int):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
-                id = await self.db.execute(
+                id = await conn.execute(
                     "INSERT INTO  guilds(samp_ip, samp_url) VALUES($1, $2) WHERE gid=$3 ON CONFLICT DO UPDATE SET samp_ip=$1, samp_port=$2 WHERE gid=$3;",
                     ip,
                     port,
