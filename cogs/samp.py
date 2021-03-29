@@ -63,7 +63,7 @@ class SampUtils(commands.Cog):
     @samp.command()
     async def info(self, ctx):
         async with ctx.typing():
-            gdata = self.get_samp_ip_port(ctx.guild.id)
+            gdata = await self.get_samp_ip_port(ctx.guild.id)
             request = functools.partial(get_samp_data, gdata['samp_ip'],gdata['samp_port'])
             results = await self.bot.loop.run_in_executor(None, request)
             embed = self.bot.embed(title="Samp Status", description=f"```{results.hostname}```", colorful=False)
@@ -75,7 +75,7 @@ class SampUtils(commands.Cog):
     @samp.command()
     async def players(self, ctx):
         async with ctx.typing():
-            gdata = self.get_samp_ip_port(ctx.guild.id)
+            gdata = await self.get_samp_ip_port(ctx.guild.id)
             request = functools.partial(get_samp_data, gdata['samp_ip'], gdata['samp_port'])
             results = await self.bot.loop.run_in_executor(None, request)
             players = [a for a in results]
