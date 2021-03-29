@@ -18,7 +18,7 @@ class GuildManagement(commands.Cog):
                 await message.author.edit(nick=message.author.display_name[5:])
             except discord.Forbidden:
                 await message.channel.send("Failed to change your nickname!! Permissions Denied!!", delete_after=10)
-        elif n := discord.utils.find(lambda n: n.id in self.afkers.keys(), message.mentions):
+        if n := discord.utils.find(lambda n: n.id in self.afkers.keys(), message.mentions):
             await message.reply(embed=self.bot.embed(description=f"Sorry but `{n.display_name}` is afk \n Reason:```{self.afkers[n.id]}```"))
 
     @commands.has_permissions(administrator=True)
@@ -61,9 +61,9 @@ class GuildManagement(commands.Cog):
     async def info(
         self,
         ctx: commands.Context,
-        needed: typing.Optional[typing.Union[discord.Member, discord.Role]],
+        inquiry: typing.Optional[typing.Union[discord.Member, discord.Role]],
     ):
-        if not needed:
+        if not inquiry:
             embed = self.bot.embed()
             embed.set_author(name=ctx.guild.name, icon_url=ctx.guild.icon_url)
             embed.add_field(
@@ -82,6 +82,11 @@ class GuildManagement(commands.Cog):
             embed.add_field(name="Roles", value=len(ctx.guild.roles))
             embed.set_thumbnail(url=ctx.guild.icon_url)
             await ctx.send(embed=embed)
+        if type(inquiry) == discord.Member:
+            embed = self.bot.embed()
+            embed.set_author(name=inquiry.display_name, icon_url=inquiry.avatar_url)
+            
+            pass
 
 
 def setup(bot):
