@@ -44,7 +44,7 @@ class SampUtils(commands.Cog):
 
     @commands.has_permissions(administrator=True)
     @samp.command(name="set samp", ignore_extra=True)
-    async def set_samp(self, ctx, ip: str, port: int):
+    async def set(self, ctx, ip: str, port: int):
         async with self.db.acquire() as conn:
             async with conn.transaction():
                 id = await self.db.execute(
