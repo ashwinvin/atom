@@ -69,6 +69,7 @@ class SampUtils(commands.Cog):
             embed = self.bot.embed(title="Samp Status", description=f"```{results[1].hostname}```", colorful=False)
             embed.add_field(name="Players", value=f"{len(results[0])} Players Online")
             embed.add_field(name="Average Ping", value=f"{int(statistics.mean([a.ping for a in results[0]]))} ms")
+            embed.set_footer(text="Shahad Uyir")
             await ctx.reply(embed=embed)
 
     @commands.cooldown(1, 3, BucketType.guild)
@@ -78,7 +79,7 @@ class SampUtils(commands.Cog):
             gdata = await self.get_samp_ip_port(ctx.guild.id)
             request = functools.partial(get_samp_data, gdata['samp_ip'], gdata['samp_port'])
             results = await self.bot.loop.run_in_executor(None, request)
-            players = [a for a in results]
+            players = [a for a in results[0]]
             # embed = self.bot.embed(title="Samp Players", description=f"```{results.hostname}```", colorful=False)
             smenus = menus.MenuPages(source=SampPlayers(players), clear_reactions_after=True)
             await smenus.start(ctx)
