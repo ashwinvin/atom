@@ -80,8 +80,8 @@ class SampUtils(commands.Cog):
             results = await self.bot.loop.run_in_executor(None, request)
             players = [a for a in results]
             # embed = self.bot.embed(title="Samp Players", description=f"```{results.hostname}```", colorful=False)
-            menus = menus.MenuPages(source=SampPlayers(players), clear_reactions_after=True)
-            await menus.start(ctx)
+            smenus = menus.MenuPages(source=SampPlayers(players), clear_reactions_after=True)
+            await smenus.start(ctx)
 
 def setup(bot):
     bot.add_cog(SampUtils(bot))
