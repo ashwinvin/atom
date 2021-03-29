@@ -7,8 +7,10 @@ CREATE TABLE errors (id SERIAL PRIMARY KEY,
                     fixed BOOL NOT NULL);
 
 CREATE TABLE guilds (id SERIAL PRIMARY KEY,
-                    gid INT NOT NULL UNIQUE,
+                    gid BIGINT NOT NULL UNIQUE,
                     samp_ip TEXT,
                     samp_port INT,
-                    sbchannel INT ,
+                    sbchannel BIGINT ,
                     sbmin INT);
+
+ 
