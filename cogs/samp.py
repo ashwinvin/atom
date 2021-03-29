@@ -43,7 +43,7 @@ class SampUtils(commands.Cog):
         return gdata
 
     @commands.has_permissions(administrator=True)
-    @samp.command(name="set samp", ignore_extra=True)
+    @samp.command(name="samp", ignore_extra=True)
     async def set(self, ctx, ip: str, port: int):
         async with self.db.acquire() as conn:
             async with conn.transaction():
