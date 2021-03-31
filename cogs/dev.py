@@ -1,3 +1,5 @@
+import asyncio
+from asyncio import subprocess
 import time
 import discord
 import typing
@@ -64,6 +66,17 @@ class DevTools(commands.Cog):
                     description="Failed to reload Cogs!! \n Check console for errors"
                 )
             )
+
+    @commands.is_owner()
+    @commands.command()
+    async def sync(self, ctx):
+        msg = await ctx.send(embed=self.bot.embed(description="Pulling from git"))
+        proc = asyncio.create_subprocess_shell("git pull", stderr=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE)
+        stdout, stderr = await proc.communicate()
+        embed = self.bot.embed(description=f"Done! \n ```{stdout}``` \n Process exited with code : {proc.returncode}")
+        await msg.edit(embed=embed)
+        await ctx.invoke(self.reload)
+
 
 def setup(bot):
     bot.add_cog(DevTools(bot))
