@@ -30,7 +30,7 @@ class SampUtils(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     async def samp(self, ctx):
-        if not ctx.invoked_subcommands:
+        if not ctx.invoked_subcommand:
             await ctx.reply(
                 embed=self.bot.embed(
                     description=f"Use `{ctx.prefix}samp players` for player info \n Use `{ctx.prefix}samp info` for general info", colorful=False
@@ -66,7 +66,10 @@ class SampUtils(commands.Cog):
         async with ctx.typing():
             gdata = await self.get_samp_ip_port(ctx.guild.id)
             request = functools.partial(get_samp_data, gdata['samp_ip'],gdata['samp_port'])
-            results = await self.bot.loop.run_in_executor(None, request)
+            try:
+                results = await self.bot.loop.run_in_executor(None, request)
+            except Exception as e:
+                return await ctx.reply(embed=self.bot.embed(description="Seems like the server is down!", colorful=False))
             embed = self.bot.embed(title="Samp Status", description=f"```{results[1].hostname}```", colorful=False)
             embed.add_field(name="Players", value=f"{len(results[0])} Players Online")
             embed.add_field(name="Average Ping", value=f"{int(statistics.mean([a.ping for a in results[0]]))} ms")
@@ -79,7 +82,10 @@ class SampUtils(commands.Cog):
         async with ctx.typing():
             gdata = await self.get_samp_ip_port(ctx.guild.id)
             request = functools.partial(get_samp_data, gdata['samp_ip'], gdata['samp_port'])
-            results = await self.bot.loop.run_in_executor(None, request)
+            try:
+                results = await self.bot.loop.run_in_executor(None, request)
+            except Exception as e:
+                return await ctx.reply(embed=self.bot.embed(description="Seems like the server is down!", colorful=False))
             players = [a for a in results[0]]
             smenus = menus.MenuPages(source=SampPlayers(players), clear_reactions_after=True)
             await smenus.start(ctx)
