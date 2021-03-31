@@ -119,7 +119,7 @@ class GuildManagement(commands.Cog):
         user = ctx.author if not user else user
         embed = self.bot.embed()
         embed.set_author(name=user.display_name, icon_url=user.avatar_url)
-        embed.set_thumbnail(url=user.avatar_url)
+        embed.set_thumbnail(url=str(user.avatar_url))
         embed.add_field(name="Roles", value=f"{len(user.roles)} roles")
         embed.add_field(
             name="Joined Server At",
