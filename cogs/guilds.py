@@ -110,7 +110,7 @@ class GuildManagement(commands.Cog):
         embed.set_thumbnail(url=ctx.guild.icon_url)
         await ctx.send(embed=embed)
 
-    @commands.command(name="server-info")
+    @commands.command(name="user-info")
     async def user_info(
         self,
         ctx: commands.Context,
