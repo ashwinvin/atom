@@ -132,11 +132,23 @@ class GuildManagement(commands.Cog):
 
         embed.add_field(
             name="Permissions",
-            value=" ,".join(
-                map(lambda b: b.replace("_", " ").capitalize(), filter(
-                    lambda a: True if not "__" in a else False,
-                    dir(user.guild_permissions),
-                ))
+            value=", ".join(
+                map(
+                    lambda b: b.replace("_", " ").capitalize(),
+                    filter(
+                        lambda a: True
+                        if not a
+                        in [
+                            "__",
+                            "DEFAULT_VALUE",
+                            "VALID_FLAGS",
+                            "none"
+                        ]
+                        and not a.startswith(["_", "all", "is"])
+                        else False,
+                        dir(user.guild_permissions),
+                    ),
+                )
             ),
         )
         await ctx.reply(embed=embed)
