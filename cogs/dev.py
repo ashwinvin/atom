@@ -71,7 +71,7 @@ class DevTools(commands.Cog):
     @commands.command()
     async def sync(self, ctx):
         msg = await ctx.send(embed=self.bot.embed(description="Pulling from git"))
-        proc = asyncio.create_subprocess_shell("git pull", stderr=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE)
+        proc = await asyncio.create_subprocess_shell("git pull", stderr=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE)
         stdout, stderr = await proc.communicate()
         embed = self.bot.embed(description=f"Done! \n ```{stdout}``` \n Process exited with code : {proc.returncode}")
         await msg.edit(embed=embed)
