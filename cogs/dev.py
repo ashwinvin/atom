@@ -76,7 +76,7 @@ class DevTools(commands.Cog):
             stdout, stderr = await proc.communicate(timeout=15)
         except Exception as e:
             return await ctx.send(f"Something Happened! Failed to pull from git \n {e}")
-        embed = self.bot.embed(description=f"Done! \n ```{stdout}``` \n Process exited with code : {proc.returncode}")
+        embed = self.bot.embed(description=f"Done! \n ```{stdout.decode('utf-8')}``` \n Process exited with code : {proc.returncode}")
         await msg.edit(embed=embed)
         await ctx.invoke(self.reload)
 
