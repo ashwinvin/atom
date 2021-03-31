@@ -73,7 +73,7 @@ class DevTools(commands.Cog):
         msg = await ctx.send(embed=self.bot.embed(description="Pulling from git"))
         proc = await asyncio.create_subprocess_shell("git pull", stderr=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE)
         try:
-            stdout, stderr = await proc.communicate(timeout=15)
+            stdout, stderr = await proc.communicate()
         except Exception as e:
             return await ctx.send(f"Something Happened! Failed to pull from git \n {e}")
         embed = self.bot.embed(description=f"Done! \n ```{stdout.decode('utf-8')}``` \n Process exited with code : {proc.returncode}")
