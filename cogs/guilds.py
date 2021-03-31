@@ -144,7 +144,7 @@ class GuildManagement(commands.Cog):
                             "VALID_FLAGS",
                             "none"
                         ]
-                        and not a.startswith(["_", "all", "is"])
+                        and not a.startswith(("_", "all", "is"))
                         else False,
                         dir(user.guild_permissions),
                     ),
