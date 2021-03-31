@@ -72,7 +72,10 @@ class DevTools(commands.Cog):
     async def sync(self, ctx):
         msg = await ctx.send(embed=self.bot.embed(description="Pulling from git"))
         proc = await asyncio.create_subprocess_shell("git pull", stderr=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE)
-        stdout, stderr = await proc.communicate()
+        try:
+            stdout, stderr = await proc.communicate(timeout=15)
+        except Exception as e:
+            return await ctx.send(f"Something Happened! Failed to pull from git \n {e}")
         embed = self.bot.embed(description=f"Done! \n ```{stdout}``` \n Process exited with code : {proc.returncode}")
         await msg.edit(embed=embed)
         await ctx.invoke(self.reload)
