@@ -91,7 +91,7 @@ class DevTools(commands.Cog):
                     table = beautifultable.BeautifulTable()
                     table.columns.header = list(results[0].keys()) 
                     for result in results:
-                        table.rows.append(result.items())
+                        table.rows.append(result.values())
                     await ctx.send(table)
         # except Exception as e:
             # await ctx.send(f"Sql Statement failed due to \n {e}")
