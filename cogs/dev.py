@@ -1,8 +1,7 @@
 import asyncio
-from asyncio import subprocess
 import time
-import discord
 import typing
+import 
 from discord.ext import commands
 
 
@@ -80,6 +79,18 @@ class DevTools(commands.Cog):
         await msg.edit(embed=embed)
         await ctx.invoke(self.reload)
 
+
+    @commands.is_owner()
+    @commands.command()
+    async def sql(self, ctx, *query: str):
+        try:
+            async with self.bot.db.acquire() as conn:
+                async with conn.transaction():
+                    result = await conn.fetch(query)
+            await ctx.send()
+        except Exception as e:
+            await ctx.send(f"Sql Statement failed due to \n {e}")
+        
 
 def setup(bot):
     bot.add_cog(DevTools(bot))
