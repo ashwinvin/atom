@@ -1,7 +1,7 @@
 import asyncio
 import time
 import typing
-import 
+import beautifultable
 from discord.ext import commands
 
 
