@@ -83,8 +83,7 @@ class DevTools(commands.Cog):
     @commands.is_owner()
     @commands.command()
     async def sql(self, ctx, *query: str):
-        # try:
-            
+        try:
             async with self.bot.db.acquire() as conn:
                 async with conn.transaction():
                     results = await conn.fetch(" ".join(query))
@@ -92,9 +91,9 @@ class DevTools(commands.Cog):
                     table.columns.header = list(results[0].keys()) 
                     for result in results:
                         table.rows.append(result.values())
-                    await ctx.send(table)
-        # except Exception as e:
-            # await ctx.send(f"Sql Statement failed due to \n {e}")
+                    await ctx.send(f"```{table}```")
+        except Exception as e:
+            await ctx.send(f"Sql Statement failed due to \n {e}")
 
 def setup(bot):
     bot.add_cog(DevTools(bot))
