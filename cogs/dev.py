@@ -88,7 +88,7 @@ class DevTools(commands.Cog):
                 async with conn.transaction():
                     results = await conn.fetch(" ".join(query))
                     table = beautifultable.BeautifulTable()
-                    table.columns.header = list(results[0].keys()) 
+                    table.columns.header = list(results[0].keys())  
                     for result in results:
                         table.rows.append(result.values())
                     await ctx.send(f"```{table}```")
