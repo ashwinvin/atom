@@ -60,6 +60,7 @@ class Analyst(commands.Bot):
             commands.CommandNotFound,
             commands.MissingRequiredArgument,
             commands.MissingPermissions,
+            commands.NotOwner
         )
 
         error = getattr(exc, "original", exc)
