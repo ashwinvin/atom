@@ -40,7 +40,7 @@ class SampUtils(commands.Cog):
     async def get_samp_ip_port(self, id):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
-                gdata = await conn.fetchrow("SELECT samp_port, samp_ip FROM guilds WHERE gid=$1;", id)
+                gdata = await conn.fetchrow("SELECT samp_ip,samp_port  FROM guilds INNER JOIN samp ON guilds.id = samp.id WHERE gid = $1;", id)
         return gdata
 
     @commands.has_permissions(administrator=True)
@@ -49,7 +49,10 @@ class SampUtils(commands.Cog):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 id = await conn.execute(
-                    "INSERT INTO  guilds(samp_ip, samp_port, gid) VALUES($1,$2,$3) ON CONFLICT (gid) DO UPDATE SET samp_ip=$1 , samp_port=$2 WHERE guilds.gid=$3;",
+                    """INSERT INTO samp(id, samp_ip, samp_port) 
+                            VALUES((SELECT guilds.id FROM guilds WHERE gid = $3), $1, $2) 
+                            ON CONFLICT (id) DO
+                            UPDATE SET samp_ip=$1 , samp_port=$2, WHERE samp.id = (SELECT id FROM guilds WHERE gid = $3);""",
                     ip,
                     port,
                     ctx.guild.id,
@@ -59,7 +62,7 @@ class SampUtils(commands.Cog):
                 description=f"Samp Server info has been updated!!", colorful=True
             )
         )
-
+# INSERT INTO sam   p(id, samp_ip, samp_port) VALUES((SELECT id FROM guilds WHERE gid = $1 ), , ) ON CONFLICT (gid) DO UPDATE SET samp_ip= , samp_port=$2 WHERE guilds.gid=$3;
     @commands.cooldown(1, 3, BucketType.guild)
     @samp.command()
     async def info(self, ctx):
