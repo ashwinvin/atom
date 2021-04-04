@@ -26,6 +26,12 @@ def loadall(bot):
                 f"Failed to load {ext} !! Traceback saved in errors/{ext}.. {e}"
             )
 
+async def get_prefix(bot, message):
+    async with bot.db.acquire() as conn:
+        async with conn.transaction():
+            gdata = await conn.fetchrow("SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id)
+    return commands.when_mentioned_or(list(gdata["prefix"]))(bot, message)
+
 
 class CEmbed(discord.Embed):
     def __init__(self, colorful=True, *args, **kwargs):
@@ -44,7 +50,7 @@ class Analyst(commands.Bot):
         self.db = kwargs.get("db")
         self.dev_guild = kwargs.get("dev_guild")
         self.error_channel = kwargs.get("error_channel")
-
+        self.command_prefix = get_prefix
 
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
