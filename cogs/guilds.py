@@ -1,7 +1,6 @@
 import discord
 import typing
 import asyncio
-from discord.enums import PremiumType
 from discord.ext import commands
 
 
@@ -116,6 +115,24 @@ class GuildManagement(commands.Cog):
         embed.add_field(name="Roles", value=len(ctx.guild.roles))
         embed.set_thumbnail(url=ctx.guild.icon_url)
         await ctx.send(embed=embed)
+
+    @commands.has_permissions(administrator=True)
+    @commands.command()
+    async def reset(self, ctx):
+        await ctx.send("Reset all the configs for this server....")
+        async with self.bot.db.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("DELETE FROM guilds WHERE gid = $1", ctx.guild.id)
+                await conn.execute("INSERT INTO guilds(gid) VALUES($1)", ctx.guild.id)
+        await ctx.send("Done!")
+
+    @commands.has_permissions(administrator=True)
+    @commands.command()
+    async def set_prefix(self, ctx, prefix: str):
+        async with self.bot.db.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2", prefix, ctx.guild.id)
+        await ctx.send(f"Prefix is now {prefix}")
 
     @commands.command(name="user-info")
     async def user_info(
