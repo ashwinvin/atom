@@ -52,7 +52,7 @@ class SampUtils(commands.Cog):
                     """INSERT INTO samp(id, samp_ip, samp_port) 
                             VALUES((SELECT guilds.id FROM guilds WHERE gid = $3), $1, $2) 
                             ON CONFLICT (id) DO
-                            UPDATE SET samp_ip=$1 , samp_port=$2, WHERE samp.id = (SELECT id FROM guilds WHERE gid = $3);""",
+                            UPDATE SET samp_ip=$1 , samp_port=$2 WHERE samp.id = (SELECT id FROM guilds WHERE gid = $3);""",
                     ip,
                     port,
                     ctx.guild.id,
