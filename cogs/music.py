@@ -409,13 +409,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             ctx.guild.id, cls=Player, context=ctx
         )
 
-        if player.context:
-            if player.context.channel != ctx.channel:
-                await ctx.send(
-                    f"{ctx.author.mention}, you must be in {player.context.channel.mention} for this session."
-                )
-                raise IncorrectChannelError
-
         if ctx.command.name == "connect" and not player.context:
             return
         elif self.is_privileged(ctx):
