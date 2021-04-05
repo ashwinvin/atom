@@ -126,13 +126,15 @@ class GuildManagement(commands.Cog):
                 await conn.execute("INSERT INTO guilds(gid) VALUES($1)", ctx.guild.id)
         await ctx.send("Done!")
 
-    @commands.has_permissions(administrator=True)
     @commands.command()
-    async def set_prefix(self, ctx, prefix: str):
-        async with self.bot.db.acquire() as conn:
-            async with conn.transaction():
-                await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2", prefix, ctx.guild.id)
-        await ctx.send(f"Prefix is now {prefix}")
+    async def prefix(self, ctx, prefix: typing.Optional[str]):
+        if prefix and ctx.author.guild_permission.administrator:
+            async with self.bot.db.acquire() as conn:
+                async with conn.transaction():
+                    await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2", prefix, ctx.guild.id)
+            return await ctx.send(f"Prefix is now {prefix}")
+        else:
+            return await ctx.reply(f"My prefix is {ctx.prefix}")
 
     @commands.command(name="user-info")
     async def user_info(
