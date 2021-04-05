@@ -62,12 +62,14 @@ class SampUtils(commands.Cog):
                 description=f"Samp Server info has been updated!!", colorful=True
             )
         )
-# INSERT INTO sam   p(id, samp_ip, samp_port) VALUES((SELECT id FROM guilds WHERE gid = $1 ), , ) ON CONFLICT (gid) DO UPDATE SET samp_ip= , samp_port=$2 WHERE guilds.gid=$3;
+        
     @commands.cooldown(1, 3, BucketType.guild)
     @samp.command()
     async def info(self, ctx):
         async with ctx.typing():
             gdata = await self.get_samp_ip_port(ctx.guild.id)
+            if not gdata:
+                return await ctx.reply(embed=self.bot.embed(description=f"Samp module is not configured.. Pls do `{ctx.prefix}samp set ip port`", colorful=False))
             request = functools.partial(get_samp_data, gdata['samp_ip'],gdata['samp_port'])
             try:
                 results = await self.bot.loop.run_in_executor(None, request)
@@ -84,6 +86,8 @@ class SampUtils(commands.Cog):
     async def players(self, ctx):
         async with ctx.typing():
             gdata = await self.get_samp_ip_port(ctx.guild.id)
+            if not gdata:
+                return await ctx.reply(embed=self.bot.embed(description=f"Samp module is not configured.. Pls do `{ctx.prefix}samp set ip port`", colorful=False))
             request = functools.partial(get_samp_data, gdata['samp_ip'], gdata['samp_port'])
             try:
                 results = await self.bot.loop.run_in_executor(None, request)
