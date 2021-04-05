@@ -10,6 +10,13 @@ class GuildManagement(commands.Cog):
         self.bot = bot
         self.afkers = {}
 
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        async with self.bot.db.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("INSERT INTO guilds(gid) VALUES($1)", guild.id)
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if message.author.id in self.afkers.keys():
