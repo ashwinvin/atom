@@ -1,4 +1,3 @@
-from re import I
 import discord
 from discord.ext import commands
 from datetime import datetime
@@ -6,7 +5,8 @@ import aiohttp
 import traceback
 import logging
 import os
-
+from asyncpg import Pool
+from analyst.cache import BotCache
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +27,13 @@ def loadall(bot):
             )
 
 async def get_prefix(bot, message):
+    if message.guild.id in bot.cache.prefix.keys():
+        return commands.when_mentioned_or(bot.cache.prefix[message.guild.id])(bot, message)
+
     async with bot.db.acquire() as conn:
         async with conn.transaction():
             gdata = await conn.fetchrow("SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id)
+            bot.cache.prefix[message.guild.id] = gdata['prefix']
     return commands.when_mentioned_or(list(gdata["prefix"]))(bot, message)
 
 
@@ -47,10 +51,18 @@ class Analyst(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.embed = CEmbed
-        self.db = kwargs.get("db")
+        self.db : Pool = kwargs.get("db")
         self.dev_guild = kwargs.get("dev_guild")
         self.error_channel = kwargs.get("error_channel")
         self.command_prefix = get_prefix
+        self.cache = BotCache()
+
+    async def cache_prefix(self):
+        async with self.db.acquire() as conn:
+            async with conn.transaction():
+                gdata = await conn.fetch("SELECT prefix, gid FROM guilds;")
+        for row in gdata:
+            self.cache['prefix'][row['gid']] = row['prefix']
 
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
