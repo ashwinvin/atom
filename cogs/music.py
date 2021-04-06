@@ -352,6 +352,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @wavelink.WavelinkMixin.listener("on_track_exception")
     async def on_player_stop(self, node: wavelink.Node, payload):
         await payload.player.do_next()
+        print(payload.reason)
 
     @commands.Cog.listener()
     async def on_voice_state_update(
