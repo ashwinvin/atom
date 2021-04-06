@@ -58,7 +58,7 @@ class Analyst(commands.Bot):
         self.command_prefix = get_prefix
         self.cache = BotCache()
 
-        asyncio.get_event_loop().run_in_executor(self.cache_prefix)
+        asyncio.get_event_loop().run_in_executor(None, self.cache_prefix)
 
     async def cache_prefix(self):
         async with self.db.acquire() as conn:
