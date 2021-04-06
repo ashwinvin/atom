@@ -132,6 +132,7 @@ class GuildManagement(commands.Cog):
             async with self.bot.db.acquire() as conn:
                 async with conn.transaction():
                     await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2", prefix, ctx.guild.id)
+                    self.bot.cache.prefix[ctx.guild.id] = prefix
             return await ctx.send(f"Prefix is now {prefix}")
         else:
             return await ctx.reply(f"My prefix is {ctx.prefix}")
