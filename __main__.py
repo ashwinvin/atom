@@ -11,7 +11,7 @@ config = BotConfig()
 db = asyncio.get_event_loop().run_until_complete(asyncpg.create_pool(dsn=config.PGDSN))
 logger = logging.getLogger(__name__)
 
-bot = Analyst(command_prefix=config.PREFIX, intents=discord.Intents.all(), db=db, error_channel=config.CError)
+bot = Analyst(command_prefix=config.PREFIX, owner_id = 534615931603779617,intents=discord.Intents.all(), db=db, error_channel=config.CError)
 bot.help_command = AnalystHelp()
 
 loadall(bot)
