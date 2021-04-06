@@ -28,13 +28,13 @@ def loadall(bot):
             )
 
 async def get_prefix(bot, message):
-    if message.guild.id in bot.cache.prefix.keys():
-        return commands.when_mentioned_or(bot.cache.prefix[message.guild.id])(bot, message)
+    # if message.guild.id in bot.cache.prefix.keys():
+        # return commands.when_mentioned_or(bot.cache.prefix[message.guild.id])(bot, message)
 
     async with bot.db.acquire() as conn:
         async with conn.transaction():
             gdata = await conn.fetchrow("SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id)
-            bot.cache.prefix[message.guild.id] = gdata['prefix']
+            # bot.cache.prefix[message.guild.id] = gdata['prefix']
     return commands.when_mentioned_or(list(gdata["prefix"]))(bot, message)
 
 
