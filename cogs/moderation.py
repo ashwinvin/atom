@@ -19,7 +19,7 @@ class Moderation(commands.Cog):
         except discord.Forbidden:
             await ctx.send(f"Looks like I don't have the Permission to do that :(")
 
-    @commands.has_permissions(ban_members=True)
+    @commands.has_permissions(kick_members=True)
     @commands.bot_has_guild_permissions(kick_members=True)
     @commands.command()
     async def kick(self, ctx, users: commands.Greedy[discord.Member], *reason: str):
