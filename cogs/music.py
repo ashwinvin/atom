@@ -625,7 +625,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 f"{ctx.author.mention} has voted to stop the player.", delete_after=15
             )
 
-    @commands.command(aliases=["v", "vol"])
+    @commands.group(aliases=["v", "vol"])
     async def volume(self, ctx: commands.Context, *, vol: int):
         """Change the players volume, between 1 and 100."""
         player: Player = self.bot.wavelink.get_player(
@@ -679,8 +679,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 delete_after=15,
             )
 
-    @commands.command(hidden=True)
-    async def vol_up(self, ctx: commands.Context):
+    @volume.command()
+    async def up(self, ctx: commands.Context):
         """Command used for volume up button."""
         player: Player = self.bot.wavelink.get_player(
             guild_id=ctx.guild.id, cls=Player, context=ctx
@@ -697,8 +697,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         await player.set_volume(vol)
 
-    @commands.command(hidden=True)
-    async def vol_down(self, ctx: commands.Context):
+    @volume.command()
+    async def down(self, ctx: commands.Context):
         """Command used for volume down button."""
         player: Player = self.bot.wavelink.get_player(
             guild_id=ctx.guild.id, cls=Player, context=ctx
