@@ -5,6 +5,7 @@ import aiohttp
 import traceback
 import logging
 import os
+import asyncio
 from asyncpg import Pool
 from analyst.cache import BotCache
 
@@ -56,6 +57,8 @@ class Analyst(commands.Bot):
         self.error_channel = kwargs.get("error_channel")
         self.command_prefix = get_prefix
         self.cache = BotCache()
+
+        asyncio.get_event_loop().run_in_executor(self.cache_prefix())
 
     async def cache_prefix(self):
         async with self.db.acquire() as conn:
