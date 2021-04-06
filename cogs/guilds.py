@@ -128,7 +128,7 @@ class GuildManagement(commands.Cog):
 
     @commands.command()
     async def prefix(self, ctx, prefix: typing.Optional[str]):
-        if prefix and ctx.author.guild_permission.administrator:
+        if prefix and ctx.author.guild_permissions.administrator:
             async with self.bot.db.acquire() as conn:
                 async with conn.transaction():
                     await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2", prefix, ctx.guild.id)
