@@ -331,12 +331,12 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         nodes = {
             "MAIN": {
-                "host": "lava2.danbot.host",
+                "host": "172.105.33.207",
                 "port": 2333,
-                "rest_uri": "http://lava2.danbot.host:2333",
-                "password": "DBH",
+                "rest_uri": "http://172.105.33.207:2333",
+                "password": "youshallnotpass",
                 "identifier": "MAIN",
-                "region": "us_central",
+                "region": "india",
             }
         }
 
