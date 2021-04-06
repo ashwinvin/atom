@@ -35,7 +35,7 @@ async def get_prefix(bot, message):
         async with conn.transaction():
             gdata = await conn.fetchrow("SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id)
             # bot.cache.prefix[message.guild.id] = gdata['prefix']
-    return commands.when_mentioned_or(list(gdata["prefix"]))(bot, message)
+    return commands.when_mentioned_or(gdata["prefix"])(bot, message)
 
 
 class CEmbed(discord.Embed):
