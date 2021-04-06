@@ -1,3 +1,16 @@
 {
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "172.105.33.207",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "boty",
+            "group": "boty",
+            "database": "analyst",
+            "username": "root",
+            "password": "ashwin"
+        }
+    ]
 }
