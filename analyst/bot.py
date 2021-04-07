@@ -57,16 +57,17 @@ class Analyst(commands.Bot):
         self.error_channel = kwargs.get("error_channel")
         self.command_prefix = get_prefix
         self.cache = BotCache()
-        self.loop.create_task(self.cache_prefix())
+        self.loop.create_task(self.cache_everything())
 
-    async def cache_prefix(self):
+    async def cache_everything(self):
         self.cache['prefix'] = {}
+        self.cache['guilds'] = {}
         async with self.db.acquire() as conn:
             async with conn.transaction():
-                gdata = await conn.fetch("SELECT prefix, gid FROM guilds;")
+                gdata = await conn.fetch("SELECT music_channel, prefix FROM guilds;")
         for row in gdata:
-            self.cache['prefix'][row['gid']] = row['prefix']
-
+            self.cache.prefix[row['gid']] = row['prefix']
+            self.cache.guilds[row['gid']] = {'music_channel': row['music_channel']}
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
             return
