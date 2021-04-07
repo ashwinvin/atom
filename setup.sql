@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS guilds (
     id SERIAL PRIMARY KEY,
     gid BIGINT NOT NULL UNIQUE,
     prefix TEXT DEFAULT 'sh!' NOT NULL,
-    last_used TIMESTAMP  
+    music_channel BIGINT 
 );
 
 CREATE TABLE IF NOT EXISTS samp (
