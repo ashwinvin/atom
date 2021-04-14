@@ -17,3 +17,12 @@ CREATE TABLE IF NOT EXISTS samp (
     samp_ip TEXT,
     samp_port INT
 );
+
+CREATE TABLE IF NOT EXISTS tags (
+    id SERIAL PRIMARY KEY,
+    author BIGINT NOT NULL,
+    name TEXT NOT NULL,
+    content TEXT NOT NULL,
+    public BOOLEAN DEFAULT false,
+    allowed BIGINT []
+);
