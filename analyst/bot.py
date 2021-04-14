@@ -16,9 +16,8 @@ def loadall(bot):
     logger.info("Loading all the cogs")
     bot.load_extension("jishaku")
     for ext in os.listdir("./cogs/"):
-        if ext == "__pycache__":
+        if ext == "__pycache__" or ext == "music.py":
             continue
-
         try:
             logger.info(f"Loading {ext} ")
             bot.load_extension(f"cogs.{ext[:len(ext)-3]}")
@@ -34,8 +33,8 @@ async def get_prefix(bot, message):
     async with bot.db.acquire() as conn:
         async with conn.transaction():
             gdata = await conn.fetchrow("SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id)
-            bot.cache.prefix[message.guild.id] = gdata['prefix']
-    return commands.when_mentioned_or(gdata["prefix"])(bot, message)
+            # bot.cache.prefix[message.guild.id] = gdata['prefix']
+    return commands.when_mentioned_or("a!")(bot, message)
 
 
 class CEmbed(discord.Embed):
@@ -57,11 +56,11 @@ class Analyst(commands.Bot):
         self.error_channel = kwargs.get("error_channel")
         self.command_prefix = get_prefix
         self.cache = BotCache()
+        self.cache['prefix'] = {}
+        self.cache['guilds'] = {}
         self.loop.create_task(self.cache_everything())
 
     async def cache_everything(self):
-        self.cache['prefix'] = {}
-        self.cache['guilds'] = {}
         async with self.db.acquire() as conn:
             async with conn.transaction():
                 gdata = await conn.fetch("SELECT music_channel, prefix FROM guilds;")

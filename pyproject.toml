@@ -10,14 +10,11 @@ python = "^3.8"
 "discord.py" = {extras = ["voice"], version = "^1.6.0"}
 coloredlogs = "^15.0"
 jishaku = "^1.20.0"
-discord-py-slash-command = "^1.0.9"
-"prettify.py" = {git = "https://github.com/ShineyDev/prettify.py"}
 requests = "^2.25.1"
 asyncpg = "^0.22.0"
 wavelink = "^0.9.9"
 discord-ext-menus = {git = "https://github.com/Rapptz/discord-ext-menus.git"}
 python-dotenv = "^0.15.0"
-praw = "^7.2.0"
 samp-client = "^3.0.1"
 beautifultable = "^1.0.1"
 
