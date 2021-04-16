@@ -2,6 +2,7 @@ import asyncio
 import discord
 import typing
 from discord.ext import commands
+from discord.ext.commands.cooldowns import BucketType
 
 
 class Tag_System(commands.Cog):
@@ -23,8 +24,18 @@ class Tag_System(commands.Cog):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 data = await conn.fetchrow("SELECT * FROM tags WHERE name=$1", query)
-        pass
+        if data['author'] != ctx.author.id and data['public'] is False:
+            return await ctx.send(embed=self.bot.embed(description=f"This tag is not public!! Ask <@{data['author']}> for information on this"))
 
+        embed = self.bot.embed(description=data['content'], title=data['name'])
+        embed.set_author(name=self.bot.get_user(data['user']).display_name, icon_url=self.bot.get_user(data['user']).avatar_url)
+
+        if data['public'] is False:
+            return await ctx.author.send(embed=embed)
+        return await ctx.send(embed=embed)
+
+
+    @commands.cooldown(1, 10, BucketType.user)
     @tag.command()
     async def create(self, ctx, name: typing.Optional[str]):
         def checkM(message: discord.Message):
