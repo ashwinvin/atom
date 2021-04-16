@@ -28,7 +28,7 @@ class Tag_System(commands.Cog):
             return await ctx.send(embed=self.bot.embed(description=f"This tag is not public!! Ask <@{data['author']}> for information on this"))
 
         embed = self.bot.embed(description=data['content'], title=data['name'])
-        embed.set_author(name=self.bot.get_user(data['user']).display_name, icon_url=self.bot.get_user(data['user']).avatar_url)
+        embed.set_author(name=self.bot.get_user(data['author']).display_name, icon_url=self.bot.get_user(data['author']).avatar_url)
 
         if data['public'] is False:
             return await ctx.author.send(embed=embed)
