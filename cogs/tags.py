@@ -64,8 +64,8 @@ class Tag_System(commands.Cog):
             async with self.bot.db.acquire() as conn:
                 async with conn.transaction():
                     await conn.execute(
-                        """INSERT INTO tags(author, content, allowed, name) 
-                        VALUES($1, $2, $3, $4);""", ctx.author.id, content, allowed_users, name
+                        """INSERT INTO tags(author, content, allowed, name, gid) 
+                        VALUES($1, $2, $3, $4, $5);""", ctx.author.id, content, allowed_users, name, ctx.guild.id
                     )
             
             await ctx.reply("The tag has been successfully added!!")
