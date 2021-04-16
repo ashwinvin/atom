@@ -8,7 +8,7 @@ class Tag_System(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True)
     async def tag(self, ctx):
         if not ctx.invoked_subcommand:
             await ctx.reply(
