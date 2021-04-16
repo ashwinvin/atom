@@ -63,7 +63,7 @@ class Analyst(commands.Bot):
     async def cache_everything(self):
         async with self.db.acquire() as conn:
             async with conn.transaction():
-                gdata = await conn.fetch("SELECT music_channel, prefix FROM guilds;")
+                gdata = await conn.fetch("SELECT music_channel, prefix, gid FROM guilds;")
         for row in gdata:
             self.cache.prefix[row['gid']] = row['prefix']
             self.cache.guilds[row['gid']] = {'music_channel': row['music_channel']}
