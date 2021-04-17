@@ -88,6 +88,8 @@ class DevTools(commands.Cog):
                 async with conn.transaction():
                     results = await conn.fetch(" ".join(query))
                     table = beautifultable.BeautifulTable()
+                    if not results:
+                        return await ctx.send("The SQL query returned nothing!! ")
                     table.columns.header = list(results[0].keys())  
                     for result in results:
                         table.rows.append(result.values())
