@@ -16,7 +16,7 @@ def loadall(bot):
     logger.info("Loading all the cogs")
     bot.load_extension("jishaku")
     for ext in os.listdir("./cogs/"):
-        if ext == "__pycache__" or ext == "music.py":
+        if ext == "__pycache__" :
             continue
         try:
             logger.info(f"Loading {ext} ")
