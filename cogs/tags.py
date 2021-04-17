@@ -9,6 +9,13 @@ class Tag_System(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def cog_check(self, ctx):
+        if ctx.guild:
+            return True
+        
+        await ctx.send("Tags can only be used inside guilds!!")
+        return False  
+
     @commands.group(invoke_without_command=True)
     async def tag(self, ctx):
         if not ctx.invoked_subcommand:
@@ -31,8 +38,34 @@ class Tag_System(commands.Cog):
         embed.set_author(name=self.bot.get_user(data['author']).display_name, icon_url=self.bot.get_user(data['author']).avatar_url)
 
         if data['public'] is False:
+            await ctx.send("The information has been dmed to as you made it a private tag...")
             return await ctx.author.send(embed=embed)
+
         return await ctx.send(embed=embed)
+
+    @tag.command()
+    async def delete(self, ctx, query: str):
+        def checkM(message: discord.Message):
+            return message.channel == ctx.channel and message.author == ctx.author
+
+        try:
+            async with self.bot.db.acquire() as conn:
+                async with conn.transaction():
+                    await conn.fetchrow("SELECT id FROM tags WHERE name=$1", query)
+                    if not conn:
+                        return await ctx.send("Tag not found!!")
+
+                    await ctx.send("Are you Sure you want to delete this tag forever? (y/n)")
+                    choice = await self.bot.wait_for("message", check=checkM)
+
+                    if not choice == "y":
+                        return await ctx.reply("Aborting") 
+                    else:
+                        conn.execute("DELETE FROM tags WHERE name=$1", query)
+
+        except asyncio.TimeoutError:
+            return await ctx.reply("You did not respond in time")
+
 
 
     @commands.cooldown(1, 10, BucketType.user)
@@ -52,9 +85,10 @@ class Tag_System(commands.Cog):
             content = content.content
 
             await ctx.send(
-                f"Do you want anyone else to access the tag? if so please list else reply `no` "
+                f"Do you want anyone else to access the tag? reply `yes` or reply the list of users else reply `no` "
             )
             allowed_users = await self.bot.wait_for("message", check=checkM)
+            public = True if allowed_users.content == 'yes' else False
             allowed_users = (
                 [ctx.author.id]
                 if not allowed_users.mentions
@@ -64,8 +98,8 @@ class Tag_System(commands.Cog):
             async with self.bot.db.acquire() as conn:
                 async with conn.transaction():
                     await conn.execute(
-                        """INSERT INTO tags(author, content, allowed, name, gid) 
-                        VALUES($1, $2, $3, $4, $5);""", ctx.author.id, content, allowed_users, name, ctx.guild.id
+                        """INSERT INTO tags(author, content, allowed, name, gid, public) 
+                        VALUES($1, $2, $3, $4, $5);""", ctx.author.id, content, allowed_users, name, ctx.guild.id, public
                     )
             
             await ctx.reply("The tag has been successfully added!!")
