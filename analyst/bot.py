@@ -29,6 +29,7 @@ def loadall(bot):
 
 async def get_prefix(bot, message):
     if message.guild.id in bot.cache.prefix.keys():
+        print(bot.cache.prefix[message.guild.id]["prefix"])
         return commands.when_mentioned_or(bot.cache.prefix[message.guild.id]["prefix"])(
             bot, message
         )
@@ -39,6 +40,7 @@ async def get_prefix(bot, message):
                 "SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id
             )
             bot.cache.prefix[message.guild.id]["prefix"] = gdata["prefix"]
+            print(gdata["prefix"])
     return commands.when_mentioned_or(gdata["prefix"])(bot, message)
 
 
