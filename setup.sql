@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS guilds (
     id SERIAL PRIMARY KEY,
     gid BIGINT NOT NULL UNIQUE,
     prefix TEXT DEFAULT 'sh!' NOT NULL,
-    music_channel BIGINT 
 );
 
 CREATE TABLE IF NOT EXISTS samp (
@@ -20,10 +19,16 @@ CREATE TABLE IF NOT EXISTS samp (
 
 CREATE TABLE IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
-    gid BIGINT NOT NULL,
+    gid BIGINT NOT NULL REFERENCES guilds(gid) ON DELETE CASCADE,
     author BIGINT NOT NULL,
     name TEXT NOT NULL,
     content TEXT NOT NULL,
     public BOOLEAN DEFAULT false,
     allowed BIGINT []
 );
+
+CREATE TABLE IF NOT EXISTS whitelist(
+    id INT PRIMARY KEY REFERENCES guilds(id) ON DELETE CASCADE,
+    channel BIGINT NOT NULL,
+    roles BIGINT [] NOT NULL
+)

@@ -70,15 +70,18 @@ class DevTools(commands.Cog):
     @commands.command()
     async def sync(self, ctx):
         msg = await ctx.send(embed=self.bot.embed(description="Pulling from git"))
-        proc = await asyncio.create_subprocess_shell("git pull", stderr=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE)
+        proc = await asyncio.create_subprocess_shell(
+            "git pull", stderr=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE
+        )
         try:
             stdout, stderr = await proc.communicate()
         except Exception as e:
             return await ctx.send(f"Something Happened! Failed to pull from git \n {e}")
-        embed = self.bot.embed(description=f"Done! \n ```{stdout.decode('utf-8')}``` \n Process exited with code : {proc.returncode}")
+        embed = self.bot.embed(
+            description=f"Done! \n ```{stdout.decode('utf-8')}``` \n Process exited with code : {proc.returncode}"
+        )
         await msg.edit(embed=embed)
         await ctx.invoke(self.reload)
-
 
     @commands.is_owner()
     @commands.command()
@@ -90,12 +93,13 @@ class DevTools(commands.Cog):
                     table = beautifultable.BeautifulTable()
                     if not results:
                         return await ctx.send("The SQL query returned nothing!! ")
-                    table.columns.header = list(results[0].keys())  
+                    table.columns.header = list(results[0].keys())
                     for result in results:
                         table.rows.append(result.values())
                     await ctx.send(f"```{table}```")
         except Exception as e:
             await ctx.send(f"Sql Statement failed due to \n {e}")
+
 
 def setup(bot):
     bot.add_cog(DevTools(bot))
