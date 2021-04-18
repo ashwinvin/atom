@@ -38,7 +38,7 @@ async def get_prefix(bot, message):
             gdata = await conn.fetchrow(
                 "SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id
             )
-            bot.cache.prefix[message.guild.id] = gdata["prefix"]
+            bot.cache.prefix[message.guild.id]["prefix"] = gdata["prefix"]
     return commands.when_mentioned_or("a!")(bot, message)
 
 
