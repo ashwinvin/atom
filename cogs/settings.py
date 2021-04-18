@@ -52,7 +52,7 @@ class Settings(commands.Cog):
         await ctx.send("Done!")
 
     @set.command()
-    async def samp(self, ctx: commands.Context, ip: int, port: int):
+    async def samp(self, ctx: commands.Context, ip: str, port: int):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 id = await conn.execute(
