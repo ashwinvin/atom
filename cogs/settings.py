@@ -80,3 +80,7 @@ class Settings(commands.Cog):
                 if ctx.guild.id in self.bot.cache.prefix.keys():
                     self.bot.cache.prefix[ctx.guild.id]["prefix"] = prefix
         return await ctx.send(f"Prefix is now `{prefix}`")
+
+
+def setup(bot):
+    bot.add_cog(Settings(bot))
