@@ -29,7 +29,7 @@ def loadall(bot):
 
 async def get_prefix(bot, message):
     if message.guild.id in bot.cache.prefix.keys():
-        return commands.when_mentioned_or(bot.cache.prefix[message.guild.id])(
+        return commands.when_mentioned_or(bot.cache.prefix[message.guild.id]["prefix"])(
             bot, message
         )
 
