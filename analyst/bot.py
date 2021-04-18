@@ -39,7 +39,7 @@ async def get_prefix(bot, message):
                 "SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id
             )
             bot.cache.prefix[message.guild.id]["prefix"] = gdata["prefix"]
-    return commands.when_mentioned_or("a!")(bot, message)
+    return commands.when_mentioned_or(gdata["prefix"])(bot, message)
 
 
 class CEmbed(discord.Embed):
