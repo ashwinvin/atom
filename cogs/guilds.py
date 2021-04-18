@@ -9,7 +9,6 @@ class GuildManagement(commands.Cog):
         self.bot = bot
         self.afkers = {}
 
-
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         async with self.bot.db.acquire() as conn:
@@ -116,27 +115,6 @@ class GuildManagement(commands.Cog):
         embed.set_thumbnail(url=ctx.guild.icon_url)
         await ctx.send(embed=embed)
 
-    @commands.has_permissions(administrator=True)
-    @commands.command()
-    async def reset(self, ctx):
-        await ctx.send("Reset all the configs for this server....")
-        async with self.bot.db.acquire() as conn:
-            async with conn.transaction():
-                await conn.execute("DELETE FROM guilds WHERE gid = $1", ctx.guild.id)
-                await conn.execute("INSERT INTO guilds(gid) VALUES($1)", ctx.guild.id)
-        await ctx.send("Done!")
-
-    @commands.command()
-    async def prefix(self, ctx, prefix: typing.Optional[str]):
-        if prefix and ctx.author.guild_permissions.administrator:
-            async with self.bot.db.acquire() as conn:
-                async with conn.transaction():
-                    await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2", prefix, ctx.guild.id)
-                    self.bot.cache.prefix[ctx.guild.id] = prefix
-            return await ctx.send(f"Prefix is now {prefix}")
-        else:
-            return await ctx.reply(f"My prefix is {ctx.prefix}")
-
     @commands.command(name="user-info")
     async def user_info(
         self,
@@ -164,13 +142,7 @@ class GuildManagement(commands.Cog):
                     lambda b: b.replace("_", " ").capitalize(),
                     filter(
                         lambda a: True
-                        if not a
-                        in [
-                            "__",
-                            "DEFAULT_VALUE",
-                            "VALID_FLAGS",
-                            "none"
-                        ]
+                        if not a in ["__", "DEFAULT_VALUE", "VALID_FLAGS", "none"]
                         and not a.startswith(("_", "all", "is"))
                         else False,
                         dir(user.guild_permissions),
