@@ -64,6 +64,7 @@ class Analyst(commands.Bot):
         self.cache = BotCache()
         self.cache["prefix"] = {}
         self.cache["guilds"] = {}
+        self.config = kwargs.get("config")
         self.loop.create_task(self.cache_everything())
 
     async def cache_everything(self):
