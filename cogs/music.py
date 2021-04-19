@@ -331,10 +331,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         nodes = {
             "MAIN": {
-                "host": "172.105.33.207",
-                "port": 2333,
-                "rest_uri": "http://172.105.33.207:2333",
-                "password": "youshallnotpass",
+                "host": self.bot.config.LAVALINK_IP,
+                "port": self.bot.config.LAVALINK_PORT,
+                "rest_uri": f"http://{self.bot.config.LAVALINK_IP}:{self.bot.config.LAVALINK_PORT}",
+                "password": self.bot.config.LAVALINK_PASS,
                 "identifier": "MAIN",
                 "region": "india",
             }
