@@ -12,3 +12,6 @@ class BotConfig:
     PREFIX = os.getenv("PREFIX")
     DevGuild = os.getenv("Dev_Guild")
     CError = os.getenv("Error_Channel")
+    LAVALINK_IP = os.getenv("LAVALINK_IP")
+    LAVALINK_PORT = os.getenv("LAVALINK_PORT")
+    LAVALINK_PASS = os.getenv("LAVALINK_PASS")

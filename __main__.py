@@ -17,6 +17,7 @@ bot = Analyst(
     intents=discord.Intents.all(),
     db=db,
     error_channel=config.CError,
+    config=config,
 )
 bot.help_command = AnalystHelp()
 
