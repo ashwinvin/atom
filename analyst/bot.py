@@ -5,7 +5,6 @@ import aiohttp
 import traceback
 import logging
 import os
-import asyncio
 from asyncpg import Pool
 from analyst.cache import BotCache
 
@@ -66,16 +65,16 @@ class Analyst(commands.Bot):
         self.cache["guilds"] = {}
         self.config = kwargs.get("config")
         self.loop.create_task(self.cache_everything())
+        self.logger = logger
 
     async def cache_everything(self):
         async with self.db.acquire() as conn:
             async with conn.transaction():
                 gdata = await conn.fetch(
-                    "SELECT music_channel, prefix, gid FROM guilds;"
+                    "SELECT prefix, gid FROM guilds;"
                 )
         for row in gdata:
             self.cache.prefix[row["gid"]] = {"prefix": row["prefix"]}
-            # self.cache.guilds[row["gid"]] =
 
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):

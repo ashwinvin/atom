@@ -1,12 +1,11 @@
-import typing
 import discord
 from discord.ext import commands
-from discord.ext.commands.context import Context
 
 
 class Settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        bot.loop.create_task(self.checkNewGuilds())
 
     async def cog_check(self, ctx):
         if not ctx.guild:
@@ -18,6 +17,18 @@ class Settings(commands.Cog):
             return False
 
         return True
+
+    async def checkNewGuilds(self):
+        async with self.bot.db.acquire() as conn:
+            async with conn.transaction():
+                guilds = set([b.id for b in self.bot.guilds])
+                dbguilds = set([a["gid"] async for a in conn.cursor("SELECT gid from guilds;")])
+                if guilds != dbguilds:
+                    newGuilds = list(guilds-dbguilds)
+                    self.bot.logger.info(f"New {len(newGuilds)} Guilds found!! Updating DB")
+                    for newGuild in newGuilds:
+                        await conn.execute("INSERT INTO guilds(gid) VALUES($1)", newGuild)
+
 
     @commands.group()
     async def config(self, ctx: commands.Context):
@@ -47,9 +58,27 @@ class Settings(commands.Cog):
         await ctx.send("Reset all the configs for this server....")
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
-                await conn.execute("DELETE FROM guilds WHERE gid = $1", ctx.guild.id)
-                await conn.execute("INSERT INTO guilds(gid) VALUES($1)", ctx.guild.id)
+                await conn.execute("DELETE FROM guilds WHERE gid = $1;", ctx.guild.id)
+                await conn.execute("INSERT INTO guilds(gid) VALUES($1);", ctx.guild.id)
         await ctx.send("Done!")
+
+    @set.command()
+    async def whitelist(
+        self,
+        ctx: commands.Context,
+        role: commands.Greedy[discord.Role],
+        channel: discord.TextChannel,
+    ):
+        async with self.bot.db.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    """INSERT INTO whitelist(id, channel, roles)
+                            VALUES((SELECT guilds.id FROM guilds WHERE gid = $3), $1, $2)
+                            ON CONFLICT (id) DO
+                            UPDATE SET channel=$1 , roles=$2 WHERE whitelist.id = (SELECT id FROM guilds WHERE gid = $3);""",
+                            channel.id, role, ctx.guild.id
+                )
+        await ctx.send("Whitelist info has been updated!")
 
     @set.command()
     async def samp(self, ctx: commands.Context, ip: str, port: int):
@@ -75,7 +104,7 @@ class Settings(commands.Cog):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    "UPDATE guilds SET prefix=$1 WHERE gid=$2", prefix, ctx.guild.id
+                    "UPDATE guilds SET prefix=$1 WHERE gid=$2;", prefix, ctx.guild.id
                 )
                 if ctx.guild.id in self.bot.cache.prefix.keys():
                     self.bot.cache.prefix[ctx.guild.id]["prefix"] = prefix
