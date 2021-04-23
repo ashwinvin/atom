@@ -24,11 +24,10 @@ class Settings(commands.Cog):
                 guilds = set([b.id for b in self.bot.guilds])
                 dbguilds = set([a["gid"] async for a in conn.cursor("SELECT gid from guilds;")])
                 if guilds != dbguilds:
-                    newGuilds = list(guilds-dbguilds)
+                    newGuilds = list(guilds - dbguilds)
                     self.bot.logger.info(f"New {len(newGuilds)} Guilds found!! Updating DB")
                     for newGuild in newGuilds:
                         await conn.execute("INSERT INTO guilds(gid) VALUES($1)", newGuild)
-
 
     @commands.group()
     async def config(self, ctx: commands.Context):
@@ -76,7 +75,9 @@ class Settings(commands.Cog):
                             VALUES((SELECT guilds.id FROM guilds WHERE gid = $3), $1, $2)
                             ON CONFLICT (id) DO
                             UPDATE SET channel=$1 , roles=$2 WHERE whitelist.id = (SELECT id FROM guilds WHERE gid = $3);""",
-                            channel.id, role, ctx.guild.id
+                    channel.id,
+                    role,
+                    ctx.guild.id,
                 )
         await ctx.send("Whitelist info has been updated!")
 
@@ -93,19 +94,13 @@ class Settings(commands.Cog):
                     port,
                     ctx.guild.id,
                 )
-        await ctx.reply(
-            embed=self.bot.embed(
-                description=f"Samp Server info has been updated!!", colorful=True
-            )
-        )
+        await ctx.reply(embed=self.bot.embed(description=f"Samp Server info has been updated!!", colorful=True))
 
     @set.command()
     async def prefix(self, ctx: commands.Context, prefix: str):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
-                await conn.execute(
-                    "UPDATE guilds SET prefix=$1 WHERE gid=$2;", prefix, ctx.guild.id
-                )
+                await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2;", prefix, ctx.guild.id)
                 if ctx.guild.id in self.bot.cache.prefix.keys():
                     self.bot.cache.prefix[ctx.guild.id]["prefix"] = prefix
         return await ctx.send(f"Prefix is now `{prefix}`")

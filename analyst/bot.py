@@ -21,22 +21,16 @@ def loadall(bot):
             logger.info(f"Loading {ext} ")
             bot.load_extension(f"cogs.{ext[:len(ext)-3]}")
         except Exception as e:
-            logger.error(
-                f"Failed to load {ext} !! Traceback saved in errors/{ext}.. {e}"
-            )
+            logger.error(f"Failed to load {ext} !! Traceback saved in errors/{ext}.. {e}")
 
 
 async def get_prefix(bot, message):
     if message.guild.id in bot.cache.prefix.keys():
-        return commands.when_mentioned_or(bot.cache.prefix[message.guild.id]["prefix"])(
-            bot, message
-        )
+        return commands.when_mentioned_or(bot.cache.prefix[message.guild.id]["prefix"])(bot, message)
 
     async with bot.db.acquire() as conn:
         async with conn.transaction():
-            gdata = await conn.fetchrow(
-                "SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id
-            )
+            gdata = await conn.fetchrow("SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id)
             bot.cache.prefix[message.guild.id]["prefix"] = gdata["prefix"]
     return commands.when_mentioned_or(gdata["prefix"])(bot, message)
 
@@ -47,9 +41,7 @@ class CEmbed(discord.Embed):
         self.timestamp = datetime.now()
         self.color = 0x2F3136
         if colorful:
-            self.set_image(
-                url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif"
-            )
+            self.set_image(url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif")
 
 
 class Analyst(commands.Bot):
@@ -70,9 +62,7 @@ class Analyst(commands.Bot):
     async def cache_everything(self):
         async with self.db.acquire() as conn:
             async with conn.transaction():
-                gdata = await conn.fetch(
-                    "SELECT prefix, gid FROM guilds;"
-                )
+                gdata = await conn.fetch("SELECT prefix, gid FROM guilds;")
         for row in gdata:
             self.cache.prefix[row["gid"]] = {"prefix": row["prefix"]}
 
@@ -103,9 +93,7 @@ class Analyst(commands.Bot):
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
-                await ctx.author.send(
-                    f"{ctx.command} can not be used in Private Messages."
-                )
+                await ctx.author.send(f"{ctx.command} can not be used in Private Messages.")
                 return
             except discord.HTTPException:
                 pass
