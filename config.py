@@ -19,6 +19,7 @@ class BotConfig:
     REDIS_IP = os.getenv("REDIS_IP")
     REDIS_PORT = os.getenv("REDIS_PORT")
 
+
 def bot_intents() -> discord.Intents:
     intents = discord.Intents.default()
     intents.guilds = True
@@ -34,4 +35,3 @@ def bot_intents() -> discord.Intents:
     intents.reactions = True
     intents.typing = False
     return intents
-
