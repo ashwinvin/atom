@@ -14,12 +14,16 @@ class AnalystHelp(commands.HelpCommand):
         hembed = self.context.bot.embed(title="Help")
         hembed.set_footer(text="Made By Shahad!!")
         for cog, commands in mapping.items():
-            command_signatures = [self.get_command_signature(c) for c in commands if not c.hidden]
+            command_signatures = [
+                self.get_command_signature(c) for c in commands if not c.hidden
+            ]
             if command_signatures:
                 cog_name = getattr(cog, "qualified_name", "No Category")
                 if cog_name == "Jishaku" or cog_name == "DevTools":
                     continue
-                hembed.add_field(name=cog_name, value="\n".join(command_signatures), inline=False)
+                hembed.add_field(
+                    name=cog_name, value="\n".join(command_signatures), inline=False
+                )
 
         channel = self.get_destination()
         await channel.send(embed=hembed)

@@ -20,7 +20,9 @@ class GuildManagement(commands.Cog):
         if message.author.id in self.afkers.keys():
             self.afkers.pop(message.author.id)
             await message.channel.send(
-                embed=self.bot.embed(description=f"Welcome back {message.author.mention}", colorful=False)
+                embed=self.bot.embed(
+                    description=f"Welcome back {message.author.mention}", colorful=False
+                )
             )
             try:
                 await message.author.edit(nick=message.author.display_name[5:])
@@ -29,16 +31,22 @@ class GuildManagement(commands.Cog):
                     "Failed to change your nickname!! Permissions Denied!!",
                     delete_after=10,
                 )
-        if n := discord.utils.find(lambda n: n.id in self.afkers.keys(), message.mentions):
+        if n := discord.utils.find(
+            lambda n: n.id in self.afkers.keys(), message.mentions
+        ):
             await message.reply(
-                embed=self.bot.embed(description=f"Sorry but `{n.display_name}` is afk \n Reason:```{self.afkers[n.id]}```")
+                embed=self.bot.embed(
+                    description=f"Sorry but `{n.display_name}` is afk \n Reason:```{self.afkers[n.id]}```"
+                )
             )
 
     @commands.has_permissions(administrator=True)
     @commands.command()
     async def poll(self, ctx, description: str, choice1: str, choice2: str):
         """"""
-        description = f"{description} \n \n \U0001f170 {choice1} \n \U0001f171 {choice2}"
+        description = (
+            f"{description} \n \n \U0001f170 {choice1} \n \U0001f171 {choice2}"
+        )
         poll_embed = self.bot.embed(
             title="Poll",
             color=0x77FC03,
@@ -63,7 +71,9 @@ class GuildManagement(commands.Cog):
         try:
             await ctx.author.edit(nick=f"[AFK]{ctx.author.display_name}")
         except discord.Forbidden:
-            await ctx.send("Failed to change your nickname!! Permissions Denied!!", delete_after=10)
+            await ctx.send(
+                "Failed to change your nickname!! Permissions Denied!!", delete_after=10
+            )
         await asyncio.sleep(2)
         self.afkers[ctx.author.id] = "".join(reason)
 
@@ -75,7 +85,9 @@ class GuildManagement(commands.Cog):
                 description += f"{member.mention} joined at {str(member.joined_at.strftime('%Y:%m:%d'))} \n"
                 pass
 
-        embed = self.bot.embed(title=f"Bots in {ctx.guild.name}", description=description)
+        embed = self.bot.embed(
+            title=f"Bots in {ctx.guild.name}", description=description
+        )
         await ctx.send(embed=embed)
 
     @commands.command(name="server-info")
@@ -130,7 +142,8 @@ class GuildManagement(commands.Cog):
                     lambda b: b.replace("_", " ").capitalize(),
                     filter(
                         lambda a: True
-                        if not a in ["__", "DEFAULT_VALUE", "VALID_FLAGS", "none"] and not a.startswith(("_", "all", "is"))
+                        if not a in ["__", "DEFAULT_VALUE", "VALID_FLAGS", "none"]
+                        and not a.startswith(("_", "all", "is"))
                         else False,
                         dir(user.guild_permissions),
                     ),

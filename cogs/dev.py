@@ -19,7 +19,9 @@ class DevTools(commands.Cog):
         await message.edit(
             embed=self.bot.embed(
                 title="Ping Results",
-                description="Main API : {:.2f} ms \n Websocket {:.2f} ms".format(duration, self.bot.latency * 1000),
+                description="Main API : {:.2f} ms \n Websocket {:.2f} ms".format(
+                    duration, self.bot.latency * 1000
+                ),
             )
         )
 
@@ -34,7 +36,11 @@ class DevTools(commands.Cog):
                     self.bot.reload_extension(cog)
                     temp.append(cog)
                 except commands.ExtensionNotFound:
-                    await ctx.send(embed=self.bot.embed(description=f"{cog} was not reloaded as it was not found"))
+                    await ctx.send(
+                        embed=self.bot.embed(
+                            description=f"{cog} was not reloaded as it was not found"
+                        )
+                    )
         else:
             cogs = list(self.bot.extensions.keys())
             for cog in cogs:
@@ -42,7 +48,11 @@ class DevTools(commands.Cog):
                     self.bot.reload_extension(cog)
                     temp.append(cog)
                 except commands.ExtensionNotFound:
-                    await ctx.send(embed=self.bot.embed(description=f"{cog} was not reloaded as it was not found"))
+                    await ctx.send(
+                        embed=self.bot.embed(
+                            description=f"{cog} was not reloaded as it was not found"
+                        )
+                    )
         description = ""
         await first.delete()
         for cog in temp:
@@ -50,7 +60,11 @@ class DevTools(commands.Cog):
         if description != "":
             await ctx.send(embed=self.bot.embed(description=description))
         else:
-            await ctx.send(embed=self.bot.embed(description="Failed to reload Cogs!! \n Check console for errors"))
+            await ctx.send(
+                embed=self.bot.embed(
+                    description="Failed to reload Cogs!! \n Check console for errors"
+                )
+            )
 
     @commands.is_owner()
     @commands.command()

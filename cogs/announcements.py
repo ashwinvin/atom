@@ -18,10 +18,18 @@ class announcements(commands.Cog, name="Announcements"):
             return message.channel == ctx.channel and message.author == ctx.author
 
         def checkR(message: discord.Message):
-            return message.channel == ctx.channel and message.author == ctx.author and message.content != "None"
+            return (
+                message.channel == ctx.channel
+                and message.author == ctx.author
+                and message.content != "None"
+            )
 
         def checkC(message: discord.Message):
-            return message.channel == ctx.channel and message.author == ctx.author and len(message.channel_mentions) != 0
+            return (
+                message.channel == ctx.channel
+                and message.author == ctx.author
+                and len(message.channel_mentions) != 0
+            )
 
         await ctx.send("Alright, what do you want to announce?")
         description = await self.bot.wait_for("message", check=checkM)
@@ -38,8 +46,12 @@ class announcements(commands.Cog, name="Announcements"):
         role = await self.bot.wait_for("message", check=checkR)
 
         embed = self.bot.embed(title=title, description=description, color=0x47E022)
-        embed.set_footer(text=f"{ctx.guild.name}   - Announced by {ctx.message.author.display_name}")
-        embed.set_image(url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif")
+        embed.set_footer(
+            text=f"{ctx.guild.name}   - Announced by {ctx.message.author.display_name}"
+        )
+        embed.set_image(
+            url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif"
+        )
         try:
             channel_id = channel.channel_mentions[0].id
             channel = self.bot.get_channel(channel_id)

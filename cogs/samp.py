@@ -22,7 +22,10 @@ class SampPlayers(menus.ListPageSource):
         offset = menu.current_page * self.per_page
         embed = discord.Embed(
             title="Samp Players",
-            description="\n".join(f"{i}. {v.name}  `ping {v.ping}ms` " for i, v in enumerate(entries, start=offset)),
+            description="\n".join(
+                f"{i}. {v.name}  `ping {v.ping}ms` "
+                for i, v in enumerate(entries, start=offset)
+            ),
             color=0x2F3136,
         )
         embed.set_footer(text="Shahad Uyir")
@@ -64,11 +67,17 @@ class SampUtils(commands.Cog):
                         colorful=False,
                     )
                 )
-            request = functools.partial(get_samp_data, gdata["samp_ip"], gdata["samp_port"])
+            request = functools.partial(
+                get_samp_data, gdata["samp_ip"], gdata["samp_port"]
+            )
             try:
                 results = await self.bot.loop.run_in_executor(None, request)
             except Exception as e:
-                return await ctx.reply(embed=self.bot.embed(description="Seems like the server is down!", colorful=False))
+                return await ctx.reply(
+                    embed=self.bot.embed(
+                        description="Seems like the server is down!", colorful=False
+                    )
+                )
             embed = self.bot.embed(
                 title="Samp Status",
                 description=f"```{results[1].hostname}```",
@@ -94,13 +103,21 @@ class SampUtils(commands.Cog):
                         colorful=False,
                     )
                 )
-            request = functools.partial(get_samp_data, gdata["samp_ip"], gdata["samp_port"])
+            request = functools.partial(
+                get_samp_data, gdata["samp_ip"], gdata["samp_port"]
+            )
             try:
                 results = await self.bot.loop.run_in_executor(None, request)
             except Exception as e:
-                return await ctx.reply(embed=self.bot.embed(description="Seems like the server is down!", colorful=False))
+                return await ctx.reply(
+                    embed=self.bot.embed(
+                        description="Seems like the server is down!", colorful=False
+                    )
+                )
             players = [a for a in results[0]]
-            smenus = menus.MenuPages(source=SampPlayers(players), clear_reactions_after=True)
+            smenus = menus.MenuPages(
+                source=SampPlayers(players), clear_reactions_after=True
+            )
             await smenus.start(ctx)
 
 
