@@ -85,6 +85,26 @@ class Settings(commands.Cog):
                 description=f"Samp Server info has been updated!!", colorful=True
             )
         )
+    
+    @set.command()
+    async def mc(self, ctx: commands.Context, ip: str, port: int):
+        async with self.bot.db.acquire() as conn:
+            async with conn.transaction():
+                id = await conn.execute(
+                    """INSERT INTO minecraft(id, mc_ip, mc_port)
+                            VALUES((SELECT guilds.id FROM guilds WHERE gid = $3), $1, $2)
+                            ON CONFLICT (id) DO
+                            UPDATE SET mc_ip=$1 , mc_port=$2 WHERE samp.id = (SELECT id FROM guilds WHERE gid = $3);""",
+                    ip,
+                    port,
+                    ctx.guild.id,
+                )
+                
+        await ctx.reply(
+            embed=self.bot.embed(
+                description=f"Samp Server info has been updated!!", colorful=True
+            )
+        )
 
     @set.command()
     async def prefix(self, ctx: commands.Context, prefix: str):
