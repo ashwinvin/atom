@@ -74,12 +74,8 @@ class Settings(commands.Cog):
                     port,
                     ctx.guild.id,
                 )
-        await ctx.reply(
-            embed=self.bot.embed(
-                description=f"Samp Server info has been updated!!", colorful=True
-            )
-        )
-    
+        await ctx.reply(embed=self.bot.embed(description=f"Samp Server info has been updated!!", colorful=True))
+
     @set.command()
     async def mc(self, ctx: commands.Context, ip: str, port: int):
         async with self.bot.db.acquire() as conn:
@@ -93,12 +89,8 @@ class Settings(commands.Cog):
                     port,
                     ctx.guild.id,
                 )
-                
-        await ctx.reply(
-            embed=self.bot.embed(
-                description=f"Samp Server info has been updated!!", colorful=True
-            )
-        )
+
+        await ctx.reply(embed=self.bot.embed(description=f"Samp Server info has been updated!!", colorful=True))
         await ctx.reply(embed=self.bot.embed(description=f"Samp Server info has been updated!!", colorful=True))
 
     @set.command()
