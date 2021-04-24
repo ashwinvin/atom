@@ -25,9 +25,7 @@ def loadall(bot):
 
 async def get_prefix(bot, message):
     if not message.guild:
-         return commands.when_mentioned_or(bot.config.PREFIX)(
-            bot, message
-        )
+        return commands.when_mentioned_or(bot.config.PREFIX)(bot, message)
 
     if await bot.cache.exists(message.guild.id):
         guild = await bot.cache.get(message.guild.id)
