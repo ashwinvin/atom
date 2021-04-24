@@ -62,26 +62,6 @@ class Settings(commands.Cog):
         await ctx.send("Done!")
 
     @set.command()
-    async def whitelist(
-        self,
-        ctx: commands.Context,
-        role: commands.Greedy[discord.Role],
-        channel: discord.TextChannel,
-    ):
-        async with self.bot.db.acquire() as conn:
-            async with conn.transaction():
-                await conn.execute(
-                    """INSERT INTO whitelist(id, channel, roles)
-                            VALUES((SELECT guilds.id FROM guilds WHERE gid = $3), $1, $2)
-                            ON CONFLICT (id) DO
-                            UPDATE SET channel=$1 , roles=$2 WHERE whitelist.id = (SELECT id FROM guilds WHERE gid = $3);""",
-                    channel.id,
-                    role,
-                    ctx.guild.id,
-                )
-        await ctx.send("Whitelist info has been updated!")
-
-    @set.command()
     async def samp(self, ctx: commands.Context, ip: str, port: int):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
@@ -101,8 +81,9 @@ class Settings(commands.Cog):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2;", prefix, ctx.guild.id)
-                if ctx.guild.id in self.bot.cache.prefix.keys():
-                    self.bot.cache.prefix[ctx.guild.id]["prefix"] = prefix
+                guild = await self.bot.cache.get(ctx.guild.id)
+                guild = guild._replace(prefix=prefix)
+                await self.bot.cache.set(ctx.guild.id, guild)
         return await ctx.send(f"Prefix is now `{prefix}`")
 
 

@@ -4,9 +4,10 @@ from datetime import datetime
 import aiohttp
 import traceback
 import logging
-import os
+import glob
+import hashlib
 from asyncpg import Pool
-from analyst.cache import BotCache
+from analyst.cache import BotCache, guildObject
 
 logger = logging.getLogger(__name__)
 
@@ -14,24 +15,31 @@ logger = logging.getLogger(__name__)
 def loadall(bot):
     logger.info("Loading all the cogs")
     bot.load_extension("jishaku")
-    for ext in os.listdir("./cogs/"):
-        if ext == "__pycache__":
-            continue
+    for ext in glob.glob("cogs/*.py"):
         try:
-            logger.info(f"Loading {ext} ")
-            bot.load_extension(f"cogs.{ext[:len(ext)-3]}")
+            logger.info(f"Loading {ext}")
+            bot.load_extension(f"{ext[:len(ext)-3].replace('/','.')}")
         except Exception as e:
-            logger.error(f"Failed to load {ext} !! Traceback saved in errors/{ext}.. {e}")
+            logger.error(
+                f"Failed to load {ext} !! Traceback saved in errors/{ext}.. {e}"
+            )
 
 
 async def get_prefix(bot, message):
-    if message.guild.id in bot.cache.prefix.keys():
-        return commands.when_mentioned_or(bot.cache.prefix[message.guild.id]["prefix"])(bot, message)
+    if await bot.cache.exists(message.guild.id):
+        guild = await bot.cache.get(message.guild.id)
+        return commands.when_mentioned_or(guild.prefix)(
+            bot, message
+        )
 
     async with bot.db.acquire() as conn:
         async with conn.transaction():
-            gdata = await conn.fetchrow("SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id)
-            bot.cache.prefix[message.guild.id]["prefix"] = gdata["prefix"]
+            gdata = await conn.fetchrow(
+                "SELECT prefix FROM guilds WHERE gid=$1;", message.guild.id
+            )
+            guild = await bot.cache.get(message.guild.id)
+            guild = guild._replace(prefix=gdata['prefix'])
+            await bot.cache.set(message.guild.id, guild)
     return commands.when_mentioned_or(gdata["prefix"])(bot, message)
 
 
@@ -41,7 +49,9 @@ class CEmbed(discord.Embed):
         self.timestamp = datetime.now()
         self.color = 0x2F3136
         if colorful:
-            self.set_image(url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif")
+            self.set_image(
+                url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif"
+            )
 
 
 class Analyst(commands.Bot):
@@ -52,19 +62,29 @@ class Analyst(commands.Bot):
         self.dev_guild = kwargs.get("dev_guild")
         self.error_channel = kwargs.get("error_channel")
         self.command_prefix = get_prefix
-        self.cache = BotCache()
-        self.cache["prefix"] = {}
-        self.cache["guilds"] = {}
         self.config = kwargs.get("config")
+        self.cache = BotCache(self.config)
         self.loop.create_task(self.cache_everything())
         self.logger = logger
 
     async def cache_everything(self):
         async with self.db.acquire() as conn:
             async with conn.transaction():
-                gdata = await conn.fetch("SELECT prefix, gid FROM guilds;")
+                gdata = await conn.fetch(
+                    "SELECT gid, prefix, samp_ip,samp_port, mc_port, mc_ip \
+                    FROM guilds FULL JOIN samp ON guilds.id = samp.id \
+                    FULL JOIN minecraft ON guilds.id = minecraft.id;"
+                )
+        await self.cache.clear()
         for row in gdata:
-            self.cache.prefix[row["gid"]] = {"prefix": row["prefix"]}
+            await self.cache.add(
+                row["gid"],
+                guildObject(
+                    row["prefix"],
+                    {"samp_ip":row["samp_ip"], "samp_port": row["samp_port"]},
+                    {"mc_ip":row["mc_ip"], "mc_port": row['mc_port']}
+                ),
+            )
 
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
@@ -93,7 +113,9 @@ class Analyst(commands.Bot):
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
-                await ctx.author.send(f"{ctx.command} can not be used in Private Messages.")
+                await ctx.author.send(
+                    f"{ctx.command} can not be used in Private Messages."
+                )
                 return
             except discord.HTTPException:
                 pass
