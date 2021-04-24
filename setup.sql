@@ -17,6 +17,13 @@ CREATE TABLE IF NOT EXISTS samp (
     samp_port INT
 );
 
+
+CREATE TABLE IF NOT EXISTS minecraft (
+    id INT PRIMARY KEY REFERENCES guilds(id) ON DELETE CASCADE,
+    mc_ip TEXT,
+    mc_port INT
+);
+
 CREATE TABLE IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
     gid BIGINT NOT NULL REFERENCES guilds(gid) ON DELETE CASCADE,
