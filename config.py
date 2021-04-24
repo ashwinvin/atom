@@ -1,3 +1,4 @@
+import discord
 from dotenv import load_dotenv
 from dataclasses import dataclass
 import os
@@ -17,3 +18,20 @@ class BotConfig:
     LAVALINK_PASS = os.getenv("LAVALINK_PASS")
     REDIS_IP = os.getenv("REDIS_IP")
     REDIS_PORT = os.getenv("REDIS_PORT")
+
+def bot_intents() -> discord.Intents:
+    intents = discord.Intents.default()
+    intents.guilds = True
+    intents.members = True
+    intents.bans = True
+    intents.emojis = True
+    intents.integrations = False
+    intents.webhooks = False
+    intents.invites = False
+    intents.voice_states = True
+    intents.presences = True
+    intents.messages = True
+    intents.reactions = True
+    intents.typing = False
+    return intents
+
