@@ -6,7 +6,7 @@
 
 ## The only bot you will ever need!
 
-Analyst is an advanced multipurpose bot made with python. It uses postgresql as its database.
+Atom is an advanced multipurpose bot made with python. It uses postgresql as its database.
 The bot optimized for speed and efficiency.
 
 ## Features

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "analyst"
+name = "Atom"
 version = "1.0.0"
 description = "A bot"
 authors = ["ashwinvin <ashwinvinodsa@gmail.com>"]

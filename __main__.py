@@ -4,15 +4,15 @@ import logging
 import asyncpg
 import discord
 
-from analyst.bot import Analyst, loadall
-from analyst.help import AnalystHelp
+from atom.bot import Atom, loadall
+from atom.help import AnalystHelp
 from config import BotConfig, bot_intents
 
 config = BotConfig()
 db = asyncio.get_event_loop().run_until_complete(asyncpg.create_pool(dsn=config.PGDSN))
 logger = logging.getLogger(__name__)
 
-bot = Analyst(
+bot = Atom(
     command_prefix=config.PREFIX,
     owner_id=534615931603779617,
     intents=bot_intents(),

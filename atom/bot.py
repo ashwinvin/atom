@@ -49,7 +49,7 @@ class CEmbed(discord.Embed):
             self.set_image(url="https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif")
 
 
-class Analyst(commands.Bot):
+class Atom(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.embed = CEmbed
