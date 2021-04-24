@@ -7,7 +7,7 @@ import logging
 import glob
 import hashlib
 from asyncpg import Pool
-from analyst.cache import BotCache, guildObject
+from atom.cache import BotCache, guildObject
 
 logger = logging.getLogger(__name__)
 
