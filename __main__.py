@@ -1,10 +1,11 @@
-import logging
-import discord
-import asyncpg
-from analyst.help import AnalystHelp
 import asyncio
-from analyst.bot import Analyst, loadall
+import logging
 
+import asyncpg
+import discord
+
+from analyst.bot import Analyst, loadall
+from analyst.help import AnalystHelp
 from config import BotConfig, bot_intents
 
 config = BotConfig()
