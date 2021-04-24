@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS errors (
     url             TEXT NOT NULL,
     type            TEXT NOT NULL,
     msg             TEXT NOT NULL,
-    user            BIGINT NOT NULL,
+    author          BIGINT NOT NULL,
     fixed           BOOL NOT NULL
 );
 
