@@ -15,3 +15,5 @@ class BotConfig:
     LAVALINK_IP = os.getenv("LAVALINK_IP")
     LAVALINK_PORT = os.getenv("LAVALINK_PORT")
     LAVALINK_PASS = os.getenv("LAVALINK_PASS")
+    REDIS_IP = os.getenv("REDIS_IP")
+    REDIS_PORT = os.getenv("REDIS_PORT")
