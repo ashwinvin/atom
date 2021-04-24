@@ -118,11 +118,6 @@ class Settings(commands.Cog):
                 description=f"Samp Server info has been updated!!", colorful=True
             )
         )
-        await ctx.reply(
-            embed=self.bot.embed(
-                description=f"Samp Server info has been updated!!", colorful=True
-            )
-        )
 
     @set.command()
     async def prefix(self, ctx: commands.Context, prefix: str):
