@@ -22,12 +22,18 @@ class Settings(commands.Cog):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 guilds = set([b.id for b in self.bot.guilds])
-                dbguilds = set([a["gid"] async for a in conn.cursor("SELECT gid from guilds;")])
+                dbguilds = set(
+                    [a["gid"] async for a in conn.cursor("SELECT gid from guilds;")]
+                )
                 if guilds != dbguilds:
                     newGuilds = list(guilds - dbguilds)
-                    self.bot.logger.info(f"New {len(newGuilds)} Guilds found!! Updating DB")
+                    self.bot.logger.info(
+                        f"New {len(newGuilds)} Guilds found!! Updating DB"
+                    )
                     for newGuild in newGuilds:
-                        await conn.execute("INSERT INTO guilds(gid) VALUES($1)", newGuild)
+                        await conn.execute(
+                            "INSERT INTO guilds(gid) VALUES($1)", newGuild
+                        )
 
     @commands.group()
     async def config(self, ctx: commands.Context):
@@ -59,6 +65,13 @@ class Settings(commands.Cog):
             async with conn.transaction():
                 await conn.execute("DELETE FROM guilds WHERE gid = $1;", ctx.guild.id)
                 await conn.execute("INSERT INTO guilds(gid) VALUES($1);", ctx.guild.id)
+                guild = await self.bot.cache.get(ctx.guild.id)
+                guild = guild._replace(
+                    prefix=self.bot.config.PREFIX,
+                    minecraft={"ip": None, "port": None},
+                    samp={"ip": None, "port": None},
+                )
+                await self.bot.cache.set(ctx.guild.id, guild)
         await ctx.send("Done!")
 
     @set.command()
@@ -74,38 +87,50 @@ class Settings(commands.Cog):
                     port,
                     ctx.guild.id,
                 )
+                guild = await self.bot.cache.get(ctx.guild.id)
+                guild = guild._replace(samp={"ip": ip, "port": port})
+                await self.bot.cache.set(ctx.guild.id, guild)
         await ctx.reply(
             embed=self.bot.embed(
                 description=f"Samp Server info has been updated!!", colorful=True
             )
         )
-    
+
     @set.command()
     async def mc(self, ctx: commands.Context, ip: str, port: int):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
-                id = await conn.execute(
+                await conn.execute(
                     """INSERT INTO minecraft(id, mc_ip, mc_port)
                             VALUES((SELECT guilds.id FROM guilds WHERE gid = $3), $1, $2)
                             ON CONFLICT (id) DO
-                            UPDATE SET mc_ip=$1 , mc_port=$2 WHERE samp.id = (SELECT id FROM guilds WHERE gid = $3);""",
+                            UPDATE SET mc_ip=$1 , mc_port=$2 WHERE minecraft.id = (SELECT id FROM guilds WHERE gid = $3);""",
                     ip,
                     port,
                     ctx.guild.id,
                 )
-                
+                guild = await self.bot.cache.get(ctx.guild.id)
+                guild = guild._replace(minecraft={"ip": ip, "port": port})
+                await self.bot.cache.set(ctx.guild.id, guild)
+
         await ctx.reply(
             embed=self.bot.embed(
                 description=f"Samp Server info has been updated!!", colorful=True
             )
         )
-        await ctx.reply(embed=self.bot.embed(description=f"Samp Server info has been updated!!", colorful=True))
+        await ctx.reply(
+            embed=self.bot.embed(
+                description=f"Samp Server info has been updated!!", colorful=True
+            )
+        )
 
     @set.command()
     async def prefix(self, ctx: commands.Context, prefix: str):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
-                await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2;", prefix, ctx.guild.id)
+                await conn.execute(
+                    "UPDATE guilds SET prefix=$1 WHERE gid=$2;", prefix, ctx.guild.id
+                )
                 guild = await self.bot.cache.get(ctx.guild.id)
                 guild = guild._replace(prefix=prefix)
                 await self.bot.cache.set(ctx.guild.id, guild)
