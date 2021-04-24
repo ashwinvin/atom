@@ -80,6 +80,9 @@ class Analyst(commands.Bot):
                     {"mc_ip": row["mc_ip"], "mc_port": row["mc_port"]},
                 ),
             )
+        for ext in glob.glob("cogs/*.py"):    
+            hash = hashlib.md5(str(open(ext).read()).encode('utf-8')).hexdigest()
+            await self.cache.add(ext, hash)
 
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
