@@ -40,12 +40,12 @@ class DevTools(commands.Cog):
             cogs = list(self.bot.extensions.keys())
             for cog in cogs:
                 try:
-                    oldHash = await self.bot.cache.get(cog.__file__.replace("./", ""))
-                    newHash = hashlib.md5(str(open(cog.__file__).read()).encode("utf-8")).hexdigest()
+                    oldHash = await self.bot.get(cog.replace("./", ""))
+                    newHash = hashlib.md5(str(open(cog).read()).encode("utf-8")).hexdigest()
                     if newHash == oldHash:
                         continue
                     self.bot.reload_extension(cog)
-                    await self.bot.cache.set(cog.__file__.replace("./", ""), newHash)
+                    await self.bot.cache.set(cog.replace("./", ""), newHash)
                     temp.append(cog)
                 except commands.ExtensionNotFound:
                     await ctx.send(embed=self.bot.embed(description=f"{cog} was not reloaded as it was not found"))
