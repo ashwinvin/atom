@@ -19,7 +19,7 @@ class Settings(commands.Cog):
         return True
 
     async def checkNewGuilds(self):
-        await self.bot.wait_until.ready()
+        await self.bot.wait_until_ready()
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 guilds = set([b.id for b in self.bot.guilds])
