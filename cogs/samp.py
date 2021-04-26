@@ -46,10 +46,15 @@ class SampUtils(commands.Cog):
     async def get_samp_ip_port(self, id):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
-                gdata = await conn.fetchrow(
-                    "SELECT samp_ip,samp_port  FROM guilds INNER JOIN samp ON guilds.id = samp.id WHERE gid = $1;",
-                    id,
-                )
+                if await self.bot.cache.exists(id):
+                    gdata = await self.bot.cache.get(id)
+                    if not bool(gdata.samp['samp_ip']):
+                        gdata = await conn.fetchrow(
+                            "SELECT samp_ip,samp_port FROM guilds INNER JOIN samp ON guilds.id = samp.id WHERE gid = $1;",
+                            id,
+                        )
+                        gdata = gdata._replace(samp_port=gdata["samp_port"], samp_ip=gdata['samp_ip'])
+                        await self.bot.cache.set(id, gdata)
         return gdata
 
     @commands.cooldown(1, 3, BucketType.guild)
