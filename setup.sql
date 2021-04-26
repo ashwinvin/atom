@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS errors (
 CREATE TABLE IF NOT EXISTS guilds (
     id              SERIAL PRIMARY KEY,
     gid             BIGINT NOT NULL UNIQUE,
-    prefix          TEXT DEFAULT '#' NOT NULL
+    prefix          TEXT DEFAULT '#' NOT NULL,
+    kicked          TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS samp (
@@ -29,9 +30,11 @@ CREATE TABLE IF NOT EXISTS minecraft (
 CREATE TABLE IF NOT EXISTS tags (
     id            SERIAL PRIMARY KEY,
     gid           BIGINT NOT NULL REFERENCES guilds(gid) ON DELETE CASCADE,
+    creation      TIMESTAMP NOT NULL,
     author        BIGINT NOT NULL,
-    name          TEXT NOT NULL,
+    title         TEXT NOT NULL,
     content       TEXT NOT NULL,
     public        BOOLEAN DEFAULT false,
-    allowed       BIGINT []
+    allowed       BIGINT [],
+    uses          INT DEFAULT 0 NOT NULL 
 );
