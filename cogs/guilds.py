@@ -12,7 +12,6 @@ class GuildManagement(commands.Cog):
             async with conn.transaction():
                 await conn.execute("INSERT INTO guilds(gid) VALUES($1)", guild.id)
 
-
     @commands.has_permissions(administrator=True)
     @commands.command()
     async def poll(self, ctx, description: str, choice1: str, choice2: str):
@@ -29,7 +28,6 @@ class GuildManagement(commands.Cog):
         await msg.add_reaction("\U0001f170")
         await msg.add_reaction("\U0001f171")
 
-
     @commands.command()
     async def bots(self, ctx):
         description = ""
@@ -40,6 +38,7 @@ class GuildManagement(commands.Cog):
 
         embed = self.bot.embed(title=f"Bots in {ctx.guild.name}", description=description)
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(GuildManagement(bot))

@@ -3,8 +3,9 @@ import discord
 from discord.ext import commands
 import asyncio
 
+
 class Miscellaneous(commands.Cog):
-    def __init__(self, bot:commands.Bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.afkers = {}
 
@@ -108,5 +109,5 @@ class Miscellaneous(commands.Cog):
         await ctx.reply(embed=embed)
 
 
-def setup(bot:commands.Bot):
+def setup(bot: commands.Bot):
     bot.add_cog(Miscellaneous(bot))
