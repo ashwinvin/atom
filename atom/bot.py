@@ -65,7 +65,7 @@ class Atom(commands.Bot):
         self.logger = logger
 
     async def cache_everything(self):
-        await self.wait_until_ready() 
+        await self.wait_until_ready()
         await self.cache.clear()
         self.logger.info("Preparing to cache guild data")
         async with self.db.acquire() as conn:
@@ -76,12 +76,12 @@ class Atom(commands.Bot):
                     FROM guilds FULL JOIN samp ON guilds.id = samp.id \
                     FULL JOIN minecraft ON guilds.id = minecraft.id;"
                 )
-                guildIDs = [g.id for g in self.guilds] # Create a guild id list for refrence
+                guildIDs = [g.id for g in self.guilds]  # Create a guild id list for refrence
                 async for row in gdata:
-                    if row["gid"] in guildIDs: # Remove the guild from list if it exists on th db 
+                    if row["gid"] in guildIDs:  # Remove the guild from list if it exists on th db
                         guildIDs.remove(row["gid"])
                     else:
-                        await conn.execute("UPDATE SET kicked=$2 WHERE gid=$1", row['gid'], datetime.now())
+                        await conn.execute("UPDATE SET kicked=$2 WHERE gid=$1", row["gid"], datetime.now())
 
                     await self.cache.add(
                         row["gid"],
@@ -92,7 +92,7 @@ class Atom(commands.Bot):
                         ),
                     )
 
-                if guildIDs: #Check for new guilds
+                if guildIDs:  # Check for new guilds
                     self.logger.info(f"New {len(guildIDs)} Guilds found!! Updating DB")
                     await conn.executemany("INSERT INTO guilds(gid) VALUES($1)", guildIDs)
 
