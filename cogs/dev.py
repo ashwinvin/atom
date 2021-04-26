@@ -40,7 +40,7 @@ class DevTools(commands.Cog):
             cogs = list(self.bot.extensions.keys())
             for cog in cogs:
                 try:
-                    oldHash = await self.bot.get(cog.replace("./", ""))
+                    oldHash = await self.bot.cache.get(cog.replace("./", ""))
                     newHash = hashlib.md5(str(open(cog).read()).encode("utf-8")).hexdigest()
                     if newHash == oldHash:
                         continue
