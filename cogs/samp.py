@@ -48,12 +48,12 @@ class SampUtils(commands.Cog):
             async with conn.transaction():
                 if await self.bot.cache.exists(id):
                     gdata = await self.bot.cache.get(id)
-                    if not bool(gdata.samp['samp_ip']):
+                    if not bool(gdata.samp["samp_ip"]):
                         gdata = await conn.fetchrow(
                             "SELECT samp_ip,samp_port FROM guilds INNER JOIN samp ON guilds.id = samp.id WHERE gid = $1;",
                             id,
                         )
-                        gdata = gdata._replace(samp_port=gdata["samp_port"], samp_ip=gdata['samp_ip'])
+                        gdata = gdata._replace(samp_port=gdata["samp_port"], samp_ip=gdata["samp_ip"])
                         await self.bot.cache.set(id, gdata)
         return gdata
 
