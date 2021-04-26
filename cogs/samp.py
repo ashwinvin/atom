@@ -55,7 +55,7 @@ class SampUtils(commands.Cog):
                         )
                         gdata = gdata._replace(samp_port=gdata["samp_port"], samp_ip=gdata["samp_ip"])
                         await self.bot.cache.set(id, gdata)
-        return gdata
+        return gdata.samp
 
     @commands.cooldown(1, 3, BucketType.guild)
     @samp.command()
