@@ -39,6 +39,8 @@ class DevTools(commands.Cog):
         else:
             cogs = list(self.bot.extensions.keys())
             for cog in cogs:
+                if cog == "jishaku":
+                    continue
                 try:
                     oldHash = await self.bot.cache.get(cog.replace("./", ""))
                     newHash = hashlib.md5(str(open(cog).read()).encode("utf-8")).hexdigest()
