@@ -77,7 +77,7 @@ class Atom(commands.Bot):
                     FULL JOIN minecraft ON guilds.id = minecraft.id;"
                 )
                 guildIDs = [g.id for g in self.guilds]  # Create a guild id list for refrence
-                async for row in gdata:
+                async for row in gdata.cursor():
                     if row["gid"] in guildIDs:  # Remove the guild from list if it exists on th db
                         guildIDs.remove(row["gid"])
                     else:
