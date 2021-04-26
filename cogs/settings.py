@@ -18,18 +18,6 @@ class Settings(commands.Cog):
 
         return True
 
-    async def checkNewGuilds(self):
-        await self.bot.wait_until_ready()
-        async with self.bot.db.acquire() as conn:
-            async with conn.transaction():
-                guilds = set([b.id for b in self.bot.guilds])
-                dbguilds = set([a["gid"] async for a in conn.cursor("SELECT gid from guilds;")])
-                if guilds != dbguilds:
-                    newGuilds = list(guilds - dbguilds)
-                    self.bot.logger.info(f"New {len(newGuilds)} Guilds found!! Updating DB")
-                    for newGuild in newGuilds:
-                        await conn.execute("INSERT INTO guilds(gid) VALUES($1)", newGuild)
-
     @commands.group()
     async def config(self, ctx: commands.Context):
         if not ctx.invoked_subcommand:

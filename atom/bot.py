@@ -1,12 +1,14 @@
-import discord
-from discord.ext import commands
-from datetime import datetime
-import aiohttp
-import traceback
-import logging
 import glob
 import hashlib
+import logging
+import traceback
+from datetime import datetime
+
+import aiohttp
+import discord
 from asyncpg import Pool
+from discord.ext import commands
+
 from atom.cache import BotCache, guildObject
 
 logger = logging.getLogger(__name__)
@@ -63,26 +65,40 @@ class Atom(commands.Bot):
         self.logger = logger
 
     async def cache_everything(self):
+        await self.wait_until_ready() 
+        await self.cache.clear()
+        self.logger.info("Preparing to cache guild data")
         async with self.db.acquire() as conn:
             async with conn.transaction():
-                gdata = await conn.fetch(
+                # Gather all the data from db
+                gdata = await conn.prepare(
                     "SELECT gid, prefix, samp_ip,samp_port, mc_port, mc_ip \
                     FROM guilds FULL JOIN samp ON guilds.id = samp.id \
                     FULL JOIN minecraft ON guilds.id = minecraft.id;"
                 )
-        await self.cache.clear()
-        for row in gdata:
-            await self.cache.add(
-                row["gid"],
-                guildObject(
-                    row["prefix"],
-                    {"samp_ip": row["samp_ip"], "samp_port": row["samp_port"]},
-                    {"mc_ip": row["mc_ip"], "mc_port": row["mc_port"]},
-                ),
-            )
-        for ext in glob.glob("cogs/*.py"):
-            hash = hashlib.md5(str(open(ext).read()).encode("utf-8")).hexdigest()
-            await self.cache.add(ext, hash)
+                guildIDs = [g.id for g in self.guilds] # Create a guild id list for refrence
+                async for row in gdata:
+                    if row["gid"] in guildIDs: # Remove the guild from list if it exists on th db 
+                        guildIDs.remove(row["gid"])
+                    else:
+                        await conn.execute("UPDATE SET kicked=$2 WHERE gid=$1", row['gid'], datetime.now())
+
+                    await self.cache.add(
+                        row["gid"],
+                        guildObject(
+                            row["prefix"],
+                            {"samp_ip": row["samp_ip"], "samp_port": row["samp_port"]},
+                            {"mc_ip": row["mc_ip"], "mc_port": row["mc_port"]},
+                        ),
+                    )
+
+                if guildIDs: #Check for new guilds
+                    self.logger.info(f"New {len(guildIDs)} Guilds found!! Updating DB")
+                    await conn.executemany("INSERT INTO guilds(gid) VALUES($1)", guildIDs)
+
+                for ext in glob.glob("cogs/*.py"):
+                    hash = hashlib.md5(str(open(ext).read()).encode("utf-8")).hexdigest()
+                    await self.cache.add(ext, hash)
 
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
