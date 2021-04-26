@@ -43,7 +43,7 @@ class DevTools(commands.Cog):
                     continue
                 try:
                     oldHash = await self.bot.cache.get(cog.replace("./", ""))
-                    newHash = hashlib.md5(str(open("./"+cog.replace(".","/")+".py").read()).encode("utf-8")).hexdigest()
+                    newHash = hashlib.md5(str(open("./" + cog.replace(".", "/") + ".py").read()).encode("utf-8")).hexdigest()
                     if newHash == oldHash:
                         continue
                     self.bot.reload_extension(cog)
