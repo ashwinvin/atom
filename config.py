@@ -19,6 +19,7 @@ class BotConfig:
     REDIS_IP = os.getenv("REDIS_IP")
     REDIS_PORT = os.getenv("REDIS_PORT")
     REDIS_NAMESPACE = os.getenv("REDIS_NAMESPACE")
+    REDIS_DB = os.getenv("REDIS_DB")
 
 
 def bot_intents() -> discord.Intents:
