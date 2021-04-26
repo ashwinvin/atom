@@ -157,6 +157,8 @@ class Atom(commands.Bot):
         await channel.send(
             embed=self.embed(
                 title="Error !!",
-                description=f"An error has been registered with id {dict(id)['id']} and has been uploaded [here]({'https://just-paste.it/'+dict(id)['url']})",
+                description=f"An error has been registered with id {dict(id)['id']} and \
+                has been uploaded [here]({'https://just-paste.it/'+dict(id)['url']}) \n \
+                Triggered by : {ctx.author.id} \n Trigger Message: ```{ctx.message.content}```",
             )
         )
