@@ -37,7 +37,7 @@ class GuildManagement(commands.Cog):
     @commands.has_permissions(administrator=True)
     @commands.command()
     async def poll(self, ctx, description: str, choice1: str, choice2: str):
-        """"""
+        """ """
         description = f"{description} \n \n \U0001f170 {choice1} \n \U0001f171 {choice2}"
         poll_embed = self.bot.embed(
             title="Poll",
