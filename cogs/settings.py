@@ -5,7 +5,6 @@ from discord.ext import commands
 class Settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        bot.loop.create_task(self.checkNewGuilds())
 
     async def cog_check(self, ctx):
         if not ctx.guild:
