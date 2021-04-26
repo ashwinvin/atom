@@ -43,7 +43,7 @@ class DevTools(commands.Cog):
                     continue
                 try:
                     oldHash = await self.bot.cache.get(cog.replace("./", ""))
-                    newHash = hashlib.md5(str(open(cog).read()).encode("utf-8")).hexdigest()
+                    newHash = hashlib.md5(str(open("./"+cog.replace(".","/")+".py").read()).encode("utf-8")).hexdigest()
                     if newHash == oldHash:
                         continue
                     self.bot.reload_extension(cog)
@@ -58,7 +58,7 @@ class DevTools(commands.Cog):
         if description != "":
             await ctx.send(embed=self.bot.embed(description=description))
         else:
-            await ctx.send(embed=self.bot.embed(description="Failed to reload Cogs!! \n Check console for errors"))
+            await ctx.send(embed=self.bot.embed(description="Nothing to reload"))
 
     @commands.is_owner()
     @commands.command()
