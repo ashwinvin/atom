@@ -99,6 +99,7 @@ class Atom(commands.Bot):
                 for ext in glob.glob("cogs/*.py"):
                     hash = hashlib.md5(str(open(ext).read()).encode("utf-8")).hexdigest()
                     await self.cache.add(ext, hash)
+        self.logger.info("Successfully cached everything")
 
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
@@ -139,9 +140,11 @@ class Atom(commands.Bot):
             async with self.db.acquire() as conn:
                 async with conn.transaction():
                     id = await self.db.fetchrow(
-                        "INSERT INTO  errors(url, type, fixed) VALUES($1, $2, false) RETURNING id, url;",
+                        "INSERT INTO  errors(url, type, fixed, msg, author) VALUES($1, $2, false, $3, $4) RETURNING id, url;",
                         paste["key"],
                         type(exc).__name__,
+                        ctx.message.content,
+                        ctx.author.id
                     )
 
         await ctx.send(
