@@ -144,7 +144,7 @@ class Atom(commands.Bot):
                         paste["key"],
                         type(exc).__name__,
                         ctx.message.content,
-                        ctx.author.id
+                        ctx.author.id,
                     )
 
         await ctx.send(
