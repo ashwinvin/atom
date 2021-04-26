@@ -18,6 +18,7 @@ class BotConfig:
     LAVALINK_PASS = os.getenv("LAVALINK_PASS")
     REDIS_IP = os.getenv("REDIS_IP")
     REDIS_PORT = os.getenv("REDIS_PORT")
+    REDIS_NAMESPACE = os.getenv("REDIS_NAMESPACE")
 
 
 def bot_intents() -> discord.Intents:

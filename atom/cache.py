@@ -7,7 +7,7 @@ class BotCache(RedisCache):
     def __init__(self, config) -> None:
         super().__init__(
             serializer=PickleSerializer(),
-            namespace="bot",
+            namespace=config.REDIS_NAMESPACE,
             endpoint=config.REDIS_IP,
             port=config.REDIS_PORT,
         )
