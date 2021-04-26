@@ -10,7 +10,7 @@ class BotCache(RedisCache):
             namespace=config.REDIS_NAMESPACE,
             endpoint=config.REDIS_IP,
             port=config.REDIS_PORT,
-            db=config.REDIS_DB
+            db=config.REDIS_DB,
         )
 
 
