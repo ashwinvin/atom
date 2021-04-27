@@ -71,13 +71,13 @@ class Atom(commands.Bot):
         async with self.db.acquire() as conn:
             async with conn.transaction():
                 # Gather all the data from db
-                gdata = await conn.prepare(
+                gdata = conn.cursor(
                     "SELECT gid, prefix, samp_ip,samp_port, mc_port, mc_ip \
                     FROM guilds FULL JOIN samp ON guilds.id = samp.id \
                     FULL JOIN minecraft ON guilds.id = minecraft.id;"
                 )
                 guildIDs = [g.id for g in self.guilds]  # Create a guild id list for refrence
-                async for row in gdata.cursor():
+                async for row in gdata:
                     if row["gid"] in guildIDs:  # Remove the guild from list if it exists on th db
                         guildIDs.remove(row["gid"])
                     else:
@@ -94,11 +94,11 @@ class Atom(commands.Bot):
 
                 if guildIDs:  # Check for new guilds
                     self.logger.info(f"New {len(guildIDs)} Guilds found!! Updating DB")
-                    await conn.executemany("INSERT INTO guilds(gid) VALUES($1)", guildIDs)
+                    await conn.executemany("INSERT INTO guilds(gid) VALUES($1)", [[a] for a in guildIDs])
 
-                for ext in glob.glob("cogs/*.py"):
-                    hash = hashlib.md5(str(open(ext).read()).encode("utf-8")).hexdigest()
-                    await self.cache.add(ext, hash)
+        for ext in glob.glob("cogs/*.py"):
+            hash = hashlib.md5(str(open(ext).read()).encode("utf-8")).hexdigest()
+            await self.cache.add(ext, hash)
         self.logger.info("Successfully cached everything")
 
     async def on_command_error(self, ctx, exc):
