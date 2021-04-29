@@ -1,12 +1,13 @@
 import discord
 from samp_client.client import SampClient
+from atom.utils import executor
 from discord.ext.commands.cooldowns import BucketType
 from discord.ext import menus
 from discord.ext import commands
 import statistics
-import functools
 
 
+@executor()
 def get_samp_data(ip: str, port: int):
     with SampClient(address=ip, port=port) as client:
         players = client.get_server_clients_detailed()
@@ -25,13 +26,13 @@ class SampPlayers(menus.ListPageSource):
             description="\n".join(f"{i}. {v.name}  `ping {v.ping}ms` " for i, v in enumerate(entries, start=offset)),
             color=0x2F3136,
         )
-        embed.set_footer(text="Shahad Uyir")
         return embed
 
 
-class SampUtils(commands.Cog):
+class SampUtils(commands.Cog, name="Samp", description="Module for getting player info from samp servers"):
     def __init__(self, bot):
         self.bot = bot
+        self.emoji = 837198453431074846
 
     @commands.group(invoke_without_command=True)
     async def samp(self, ctx):
@@ -44,11 +45,11 @@ class SampUtils(commands.Cog):
             )
 
     async def get_samp_ip_port(self, id):
-        async with self.bot.db.acquire() as conn:
-            async with conn.transaction():
-                if await self.bot.cache.exists(id):
-                    gdata = await self.bot.cache.get(id)
-                    if not bool(gdata.samp["samp_ip"]):
+        if await self.bot.cache.exists(id):
+            gdata = await self.bot.cache.get(id)
+            if not gdata.samp["samp_ip"]:
+                async with self.bot.db.acquire() as conn:
+                    async with conn.transaction():
                         gdata = await conn.fetchrow(
                             "SELECT samp_ip,samp_port FROM guilds INNER JOIN samp ON guilds.id = samp.id WHERE gid = $1;",
                             id,
@@ -69,10 +70,10 @@ class SampUtils(commands.Cog):
                         colorful=False,
                     )
                 )
-            request = functools.partial(get_samp_data, gdata["samp_ip"], gdata["samp_port"])
             try:
-                results = await self.bot.loop.run_in_executor(None, request)
+                results = await get_samp_data(gdata["samp_ip"], gdata["samp_port"])
             except Exception as e:
+                await ctx.send(e)
                 return await ctx.reply(embed=self.bot.embed(description="Seems like the server is down!", colorful=False))
             embed = self.bot.embed(
                 title="Samp Status",
@@ -99,9 +100,8 @@ class SampUtils(commands.Cog):
                         colorful=False,
                     )
                 )
-            request = functools.partial(get_samp_data, gdata["samp_ip"], gdata["samp_port"])
             try:
-                results = await self.bot.loop.run_in_executor(None, request)
+                results = await get_samp_data(gdata["samp_ip"], gdata["samp_port"])
             except Exception as e:
                 return await ctx.reply(embed=self.bot.embed(description="Seems like the server is down!", colorful=False))
             players = [a for a in results[0]]
