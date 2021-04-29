@@ -5,7 +5,7 @@ import asyncpg
 import discord
 
 from atom.bot import Atom, loadall
-from atom.help import AnalystHelp
+from atom.help import AtomHelp
 from config import BotConfig, bot_intents
 
 config = BotConfig()
@@ -20,7 +20,7 @@ bot = Atom(
     error_channel=config.CError,
     config=config,
 )
-bot.help_command = AnalystHelp()
+bot.help_command = AtomHelp()
 
 loadall(bot)
 
