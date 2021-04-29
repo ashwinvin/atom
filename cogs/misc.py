@@ -5,16 +5,24 @@ import asyncio
 
 
 class Miscellaneous(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(
+        self,
+        bot: commands.Bot,
+        name="Utility",
+        description="Useful miscellaneous commands",
+    ):
         self.bot = bot
         self.afkers = {}
+        self.emoji = 836841159301136395
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if message.author.id in self.afkers.keys():
             self.afkers.pop(message.author.id)
             await message.channel.send(
-                embed=self.bot.embed(description=f"Welcome back {message.author.mention}", colorful=False)
+                embed=self.bot.embed(
+                    description=f"Welcome back {message.author.mention}", colorful=False
+                )
             )
             try:
                 await message.author.edit(nick=message.author.display_name[5:])
@@ -23,9 +31,13 @@ class Miscellaneous(commands.Cog):
                     "Failed to change your nickname!! Permissions Denied!!",
                     delete_after=10,
                 )
-        if n := discord.utils.find(lambda n: n.id in self.afkers.keys(), message.mentions):
+        if n := discord.utils.find(
+            lambda n: n.id in self.afkers.keys(), message.mentions
+        ):
             await message.reply(
-                embed=self.bot.embed(description=f"Sorry but `{n.display_name}` is afk \n Reason:```{self.afkers[n.id]}```")
+                embed=self.bot.embed(
+                    description=f"Sorry but `{n.display_name}` is afk \n Reason:```{self.afkers[n.id]}```"
+                )
             )
 
     @commands.command()
@@ -41,7 +53,9 @@ class Miscellaneous(commands.Cog):
         try:
             await ctx.author.edit(nick=f"[AFK]{ctx.author.display_name}")
         except discord.Forbidden:
-            await ctx.send("Failed to change your nickname!! Permissions Denied!!", delete_after=10)
+            await ctx.send(
+                "Failed to change your nickname!! Permissions Denied!!", delete_after=10
+            )
         await asyncio.sleep(2)
         self.afkers[ctx.author.id] = "".join(reason)
 
@@ -99,7 +113,8 @@ class Miscellaneous(commands.Cog):
                     lambda b: b.replace("_", " ").capitalize(),
                     filter(
                         lambda a: True
-                        if not a in ["__", "DEFAULT_VALUE", "VALID_FLAGS", "none"] and not a.startswith(("_", "all", "is"))
+                        if not a in ["__", "DEFAULT_VALUE", "VALID_FLAGS", "none"]
+                        and not a.startswith(("_", "all", "is"))
                         else False,
                         dir(user.guild_permissions),
                     ),

@@ -300,7 +300,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
+        self.emoji = 836841369565134858
         if not hasattr(bot, "wavelink"):
             bot.wavelink = wavelink.Client(bot=bot)
 

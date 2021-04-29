@@ -10,6 +10,7 @@ class announcements(commands.Cog, name="Announcements"):
 
     def __init__(self, bot):
         self.bot = bot
+        self.emoji = 836841600604045392
 
     @commands.command(pass_context=True, help="Used For Announcing ")
     @commands.has_permissions(administrator=True)
