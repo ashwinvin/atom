@@ -2,9 +2,7 @@ import discord
 from discord.ext import commands
 
 
-class Settings(
-    commands.Cog, description="Handles the bot's configuration for this server"
-):
+class Settings(commands.Cog, description="Handles the bot's configuration for this server"):
     def __init__(self, bot):
         self.bot = bot
         self.emoji = 836842746337165344
@@ -75,11 +73,7 @@ class Settings(
                 guild = await self.bot.cache.get(ctx.guild.id)
                 guild = guild._replace(samp={"ip": ip, "port": port})
                 await self.bot.cache.set(ctx.guild.id, guild)
-        await ctx.reply(
-            embed=self.bot.embed(
-                description=f"Samp Server info has been updated!!", colorful=True
-            )
-        )
+        await ctx.reply(embed=self.bot.embed(description=f"Samp Server info has been updated!!", colorful=True))
 
     @set.command()
     async def mc(self, ctx: commands.Context, ip: str, port: int):
@@ -98,19 +92,13 @@ class Settings(
                 guild = guild._replace(minecraft={"ip": ip, "port": port})
                 await self.bot.cache.set(ctx.guild.id, guild)
 
-        await ctx.reply(
-            embed=self.bot.embed(
-                description=f"Samp Server info has been updated!!", colorful=True
-            )
-        )
+        await ctx.reply(embed=self.bot.embed(description=f"Samp Server info has been updated!!", colorful=True))
 
     @set.command()
     async def prefix(self, ctx: commands.Context, prefix: str):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
-                await conn.execute(
-                    "UPDATE guilds SET prefix=$1 WHERE gid=$2;", prefix, ctx.guild.id
-                )
+                await conn.execute("UPDATE guilds SET prefix=$1 WHERE gid=$2;", prefix, ctx.guild.id)
                 guild = await self.bot.cache.get(ctx.guild.id)
                 guild = guild._replace(prefix=prefix)
                 await self.bot.cache.set(ctx.guild.id, guild)

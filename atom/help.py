@@ -32,13 +32,9 @@ class AtomHelp(commands.HelpCommand):
         Total Commands:{cmd_info['total']} | Usable by you: {cmd_info['available']}"
 
         Membed = discord.Embed(color=0xFFD105, description=notice)
-        Membed.set_author(
-            icon_url=self.context.author.avatar_url, name=self.context.author.name
-        )
+        Membed.set_author(icon_url=self.context.author.avatar_url, name=self.context.author.name)
 
-        menu = ReactionMenu(
-            self.context, back_button="◀️", next_button="▶️", config=ReactionMenu.STATIC
-        )
+        menu = ReactionMenu(self.context, back_button="◀️", next_button="▶️", config=ReactionMenu.STATIC)
 
         for cog, _ in mapping.items():
             if hasattr(cog, "qualified_name"):
@@ -46,12 +42,10 @@ class AtomHelp(commands.HelpCommand):
                     continue
                 Membed.add_field(
                     name=cog.qualified_name,
-                    value=cog.description
-                    if cog.description
-                    else "Documentation in Progress",
+                    value=cog.description if cog.description else "Documentation in Progress",
                 )
                 cog_embed = self.create_cog_help(cog)
-                cog_emoji = discord.utils.get(bot.emojis, id=cog.emoji) 
+                cog_emoji = discord.utils.get(bot.emojis, id=cog.emoji)
                 cog_button = Button(
                     emoji=str(cog_emoji),
                     linked_to=ButtonType.CUSTOM_EMBED,
@@ -63,12 +57,8 @@ class AtomHelp(commands.HelpCommand):
         await menu.start()
 
     def create_cog_help(self, cog):
-        cog_embed = discord.Embed(
-            color=0xFFD105, description=cog.description, title=cog.qualified_name
-        )
-        cog_embed.set_author(
-            icon_url=self.context.author.avatar_url, name=self.context.author.name
-        )
+        cog_embed = discord.Embed(color=0xFFD105, description=cog.description, title=cog.qualified_name)
+        cog_embed.set_author(icon_url=self.context.author.avatar_url, name=self.context.author.name)
         for command in cog.get_commands():
             cog_embed.add_field(name=command.qualified_name, value=command.help or "Documentation In Progress")
         return cog_embed

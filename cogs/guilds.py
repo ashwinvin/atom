@@ -26,9 +26,7 @@ class GuildManagement(
     @commands.command()
     async def poll(self, ctx, description: str, choice1: str, choice2: str):
         """ """
-        description = (
-            f"{description} \n \n \U0001f170 {choice1} \n \U0001f171 {choice2}"
-        )
+        description = f"{description} \n \n \U0001f170 {choice1} \n \U0001f171 {choice2}"
         poll_embed = self.bot.embed(
             title="Poll",
             color=0x77FC03,
@@ -48,9 +46,7 @@ class GuildManagement(
                 description += f"{member.mention} joined at {str(member.joined_at.strftime('%Y:%m:%d'))} \n"
                 pass
 
-        embed = self.bot.embed(
-            title=f"Bots in {ctx.guild.name}", description=description
-        )
+        embed = self.bot.embed(title=f"Bots in {ctx.guild.name}", description=description)
         await ctx.send(embed=embed)
 
     @commands.has_permissions(administrator=True)
@@ -73,9 +69,7 @@ class GuildManagement(
 
         async def add_emoji(url, name):
             async with sess.get(url) as resp:
-                emoji = await ctx.guild.create_custom_emoji(
-                    name=name, image=await resp.read(), roles=roles
-                )
+                emoji = await ctx.guild.create_custom_emoji(name=name, image=await resp.read(), roles=roles)
                 return await ctx.reply(f"{emoji} has been added")
 
         # if not URL(url).scheme:
@@ -84,7 +78,7 @@ class GuildManagement(
         if url:
             await add_emoji(url, name)
         elif ctx.message.attachments:
-            await add_emoji(ctx.message.attachments[0].url, name) 
+            await add_emoji(ctx.message.attachments[0].url, name)
         elif stolen_emoji:
             await add_emoji(f"https://cdn.discordapp.com/emojis/{emoji.id}.png?v=1", name)
         else:
@@ -96,9 +90,7 @@ class GuildManagement(
         def checkM(msg):
             return ctx.author == msg.author and msg.channel == ctx.channel
 
-        await ctx.reply(
-            "This command will delete emojis permanently. Reply `Y` if you still want to continue"
-        )
+        await ctx.reply("This command will delete emojis permanently. Reply `Y` if you still want to continue")
         consent = await self.bot.wait_for("message", check=checkM)
 
         if not consent.content in ["Y", "y"]:
@@ -107,9 +99,7 @@ class GuildManagement(
             except commands.MessageNotFound:
                 return await ctx.send("Deletion Aborted")
 
-        status = await asyncio.gather(
-            *[emoji.delete() for emoji in emojis], return_exceptions=True
-        )
+        status = await asyncio.gather(*[emoji.delete() for emoji in emojis], return_exceptions=True)
         print(status)
         await ctx.reply(f"Successfully deleted {len(emojis)} emojis")
 
