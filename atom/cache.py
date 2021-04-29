@@ -14,4 +14,4 @@ class BotCache(RedisCache):
         )
 
 
-guildObject = namedtuple("guildObject", ["prefix", "samp", "minecraft"])
+guildObject = namedtuple("guildObject", "prefix samp minecraft")
