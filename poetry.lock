@@ -445,6 +445,17 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [[package]]
+name = "reactionmenu"
+version = "1.0.7"
+description = "A package to create a discord.py reaction menu. If your discord.py version is 1.5.0+, intents are required"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+"discord.py" = ">=1.4.0"
+
+[[package]]
 name = "regex"
 version = "2021.4.4"
 description = "Alternative regular expression module, to replace re."
@@ -576,7 +587,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "c4eac751fcf7f2f3a27e0d8e850412ccb1d2242c4156dace9106ed43b5927df0"
+content-hash = "f5a46fbc158f50ec69ebd19b7a3b50547b9e8b52b419d0e694386048c1c48167"
 
 [metadata.files]
 aiocache = [
@@ -900,6 +911,9 @@ pyyaml = [
     {file = "PyYAML-5.4.1-cp39-cp39-win32.whl", hash = "sha256:49d4cdd9065b9b6e206d0595fee27a96b5dd22618e7520c33204a4a3239d5b10"},
     {file = "PyYAML-5.4.1-cp39-cp39-win_amd64.whl", hash = "sha256:c20cfa2d49991c8b4147af39859b167664f2ad4561704ee74c1de03318e898db"},
     {file = "PyYAML-5.4.1.tar.gz", hash = "sha256:607774cbba28732bfa802b54baa7484215f530991055bb562efbed5b2f20a45e"},
+]
+reactionmenu = [
+    {file = "reactionmenu-1.0.7.tar.gz", hash = "sha256:96312ce9404454373fbef3c7823c4b2d76476c826dfbb1e5649f2f9a79213478"},
 ]
 regex = [
     {file = "regex-2021.4.4-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:619d71c59a78b84d7f18891fe914446d07edd48dc8328c8e149cbe0929b4e000"},
