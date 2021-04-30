@@ -9,11 +9,9 @@ class Settings(commands.Cog, description="Handles the bot's configuration for th
 
     async def cog_check(self, ctx):
         if not ctx.guild:
-            await ctx.send("This command should be run inside a server!!")
             return False
 
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send("This command is restricted to admins!!")
             return False
 
         return True

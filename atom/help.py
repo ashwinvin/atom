@@ -32,9 +32,17 @@ class AtomHelp(commands.HelpCommand):
         Total Commands:{cmd_info['total']} | Usable by you: {cmd_info['available']}"
 
         Membed = discord.Embed(color=0xFFD105, description=notice)
-        Membed.set_author(icon_url=self.context.author.avatar_url, name=self.context.author.name)
+        Membed.set_author(
+            icon_url=self.context.author.avatar_url, name=self.context.author.name
+        )
 
-        menu = ReactionMenu(self.context, back_button="◀️", next_button="▶️", config=ReactionMenu.STATIC)
+        menu = ReactionMenu(
+            self.context,
+            back_button="◀️",
+            next_button="▶️",
+            config=ReactionMenu.STATIC,
+            navigation_speed=ReactionMenu.FAST,
+        )
 
         for cog, _ in mapping.items():
             if hasattr(cog, "qualified_name"):
@@ -42,7 +50,9 @@ class AtomHelp(commands.HelpCommand):
                     continue
                 Membed.add_field(
                     name=cog.qualified_name,
-                    value=cog.description if cog.description else "Documentation in Progress",
+                    value=cog.description
+                    if cog.description
+                    else "Documentation in Progress",
                 )
                 cog_embed = self.create_cog_help(cog)
                 cog_emoji = discord.utils.get(bot.emojis, id=cog.emoji)
@@ -57,18 +67,50 @@ class AtomHelp(commands.HelpCommand):
         await menu.start()
 
     def create_cog_help(self, cog):
-        cog_embed = discord.Embed(color=0xFFD105, description=cog.description, title=cog.qualified_name)
-        cog_embed.set_author(icon_url=self.context.author.avatar_url, name=self.context.author.name)
+        cog_embed = discord.Embed(
+            color=0xFFD105, description=cog.description, title=cog.qualified_name
+        )
+        cog_embed.set_author(
+            icon_url=self.context.author.avatar_url, name=self.context.author.name
+        )
         for command in cog.get_commands():
-            cog_embed.add_field(name=command.qualified_name, value=command.help or "Documentation In Progress")
+            cog_embed.add_field(
+                name=command.qualified_name,
+                value=command.help or "Documentation In Progress",
+            )
         return cog_embed
 
     async def send_cog_help(self, cog):
         return await self.get_destination().send(embed=self.create_cog_help(cog))
 
+    async def send_group_help(self, group: commands.Group):
+        embed = discord.Embed(
+            title=group.qualified_name,
+            description=group.help or "Documentation In Progress",
+            color=0xFFD105,
+        )
+        embed.set_author(
+            icon_url=self.context.author.avatar_url, name=self.context.author.name
+        )
+        alias = group.aliases
+
+        if alias:
+            embed.add_field(name="Aliases", value=", ".join(alias), inline=False)
+        for command in group.commands:
+            embed.add_field(
+                name=command.qualified_name,
+                value=command.help or "Documentation In Progress",
+            )
+
+        channel = self.get_destination()
+        await channel.send(embed=embed)
+
     async def send_command_help(self, command):
-        embed = discord.Embed(title=self.get_command_signature(command), color=0xFFD105)
-        embed.add_field(name="Help", value=command.help or "Documentation In Progress")
+        embed = discord.Embed(title=command.qualified_name, description=command.help or "Documentation In Progress", color=0xFFD105)
+        embed.set_author(
+            icon_url=self.context.author.avatar_url, name=self.context.author.name
+        )
+        embed.add_field(name="Usage", value=f"```{self.get_command_signature(command)}```")
         alias = command.aliases
         if alias:
             embed.add_field(name="Aliases", value=", ".join(alias), inline=False)
