@@ -21,6 +21,7 @@ class GuildManagement(
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
                 await conn.execute("INSERT INTO guilds(gid) VALUES($1)", guild.id)
+        await self.bot.recache_guild(guild.id)
 
     @commands.has_permissions(administrator=True)
     @commands.command()
@@ -80,7 +81,7 @@ class GuildManagement(
         elif ctx.message.attachments:
             await add_emoji(ctx.message.attachments[0].url, name)
         elif stolen_emoji:
-            await add_emoji(f"https://cdn.discordapp.com/emojis/{emoji.id}.png?v=1", name)
+            await add_emoji(stolen_emoji.url, name)
         else:
             await ctx.reply("No attachment or url provided!!")
         return await sess.close()
