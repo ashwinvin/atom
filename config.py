@@ -16,6 +16,8 @@ class BotConfig:
     LAVALINK_IP = os.getenv("LAVALINK_IP")
     LAVALINK_PORT = os.getenv("LAVALINK_PORT")
     LAVALINK_PASS = os.getenv("LAVALINK_PASS")
+    SPOTIFY_ID = os.getenv("SPOTIFY_ID")
+    SPOTIFY_SECRET = os.getenv("SPOTIFY_SECRET")
     REDIS_IP = os.getenv("REDIS_IP")
     REDIS_PORT = os.getenv("REDIS_PORT")
     REDIS_NAMESPACE = os.getenv("REDIS_NAMESPACE")
@@ -32,7 +34,7 @@ def bot_intents() -> discord.Intents:
     intents.webhooks = False
     intents.invites = False
     intents.voice_states = True
-    intents.presences = True
+    intents.presences = False
     intents.messages = True
     intents.reactions = True
     intents.typing = False
