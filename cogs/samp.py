@@ -1,10 +1,11 @@
-import discord
-from samp_client.client import SampClient
-from atom.utils import executor
-from discord.ext.commands.cooldowns import BucketType
-from discord.ext import menus
-from discord.ext import commands
 import statistics
+
+import discord
+from discord.ext import commands, menus
+from discord.ext.commands.cooldowns import BucketType
+from samp_client.client import SampClient
+
+from atom.utils import executor
 
 
 @executor()
@@ -23,13 +24,20 @@ class SampPlayers(menus.ListPageSource):
         offset = menu.current_page * self.per_page
         embed = discord.Embed(
             title="Samp Players",
-            description="\n".join(f"{i}. {v.name}  `ping {v.ping}ms` " for i, v in enumerate(entries, start=offset)),
+            description="\n".join(
+                f"{i}. {v.name}  `ping {v.ping}ms` "
+                for i, v in enumerate(entries, start=offset)
+            ),
             color=0x2F3136,
         )
         return embed
 
 
-class SampUtils(commands.Cog, name="Samp", description="Module for getting player info from samp servers"):
+class SampUtils(
+    commands.Cog,
+    name="Samp",
+    description="Module for getting player info from samp servers",
+):
     def __init__(self, bot):
         self.bot = bot
         self.emoji = 837198453431074846
@@ -54,7 +62,9 @@ class SampUtils(commands.Cog, name="Samp", description="Module for getting playe
                             "SELECT samp_ip,samp_port FROM guilds INNER JOIN samp ON guilds.id = samp.id WHERE gid = $1;",
                             id,
                         )
-                        gdata = gdata._replace(samp_port=gdata["samp_port"], samp_ip=gdata["samp_ip"])
+                        gdata = gdata._replace(
+                            samp_port=gdata["samp_port"], samp_ip=gdata["samp_ip"]
+                        )
                         await self.bot.cache.set(id, gdata)
         return gdata.samp
 
@@ -74,7 +84,11 @@ class SampUtils(commands.Cog, name="Samp", description="Module for getting playe
                 results = await get_samp_data(gdata["samp_ip"], gdata["samp_port"])
             except Exception as e:
                 await ctx.send(e)
-                return await ctx.reply(embed=self.bot.embed(description="Seems like the server is down!", colorful=False))
+                return await ctx.reply(
+                    embed=self.bot.embed(
+                        description="Seems like the server is down!", colorful=False
+                    )
+                )
             embed = self.bot.embed(
                 title="Samp Status",
                 description=f"```{results[1].hostname}```",
@@ -103,9 +117,15 @@ class SampUtils(commands.Cog, name="Samp", description="Module for getting playe
             try:
                 results = await get_samp_data(gdata["samp_ip"], gdata["samp_port"])
             except Exception as e:
-                return await ctx.reply(embed=self.bot.embed(description="Seems like the server is down!", colorful=False))
+                return await ctx.reply(
+                    embed=self.bot.embed(
+                        description="Seems like the server is down!", colorful=False
+                    )
+                )
             players = [a for a in results[0]]
-            smenus = menus.MenuPages(source=SampPlayers(players), clear_reactions_after=True)
+            smenus = menus.MenuPages(
+                source=SampPlayers(players), clear_reactions_after=True
+            )
             await smenus.start(ctx)
 
 

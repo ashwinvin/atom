@@ -1,6 +1,7 @@
 import asyncio
-import discord
 import typing
+
+import discord
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 
@@ -34,7 +35,9 @@ class Tag(commands.Cog, description="Module related to managing tags"):
                 data = await conn.fetchrow("SELECT * FROM tags WHERE name=$1", query)
         if data["author"] != ctx.author.id and data["public"] is False:
             return await ctx.send(
-                embed=self.bot.embed(description=f"This tag is not public!! Ask <@{data['author']}> for information on this")
+                embed=self.bot.embed(
+                    description=f"This tag is not public!! Ask <@{data['author']}> for information on this"
+                )
             )
 
         embed = self.bot.embed(description=data["content"], title=data["name"])
@@ -44,7 +47,9 @@ class Tag(commands.Cog, description="Module related to managing tags"):
         )
 
         if data["public"] is False:
-            await ctx.send("The information has been dmed to as you made it a private tag...")
+            await ctx.send(
+                "The information has been dmed to as you made it a private tag..."
+            )
             return await ctx.author.send(embed=embed)
 
         return await ctx.send(embed=embed)
@@ -61,7 +66,9 @@ class Tag(commands.Cog, description="Module related to managing tags"):
                     if not conn:
                         return await ctx.send("Tag not found!!")
 
-                    await ctx.send("Are you Sure you want to delete this tag forever? (y/n)")
+                    await ctx.send(
+                        "Are you Sure you want to delete this tag forever? (y/n)"
+                    )
                     choice = await self.bot.wait_for("message", check=checkM)
 
                     if not choice == "y":
@@ -74,7 +81,9 @@ class Tag(commands.Cog, description="Module related to managing tags"):
 
     @commands.cooldown(1, 10, BucketType.user)
     @tag.command()
-    async def create(self, ctx, name: typing.Optional[str], content: typing.Optional[str]):
+    async def create(
+        self, ctx, name: typing.Optional[str], content: typing.Optional[str]
+    ):
         def checkM(message: discord.Message):
             return message.channel == ctx.channel and message.author == ctx.author
 
@@ -93,7 +102,11 @@ class Tag(commands.Cog, description="Module related to managing tags"):
             )
             allowed_users = await self.bot.wait_for("message", check=checkM)
             public = True if allowed_users.content == "yes" else False
-            allowed_users = [ctx.author.id] if not allowed_users.mentions else [id.id for id in allowed_users.mentions]
+            allowed_users = (
+                [ctx.author.id]
+                if not allowed_users.mentions
+                else [id.id for id in allowed_users.mentions]
+            )
 
             async with self.bot.db.acquire() as conn:
                 async with conn.transaction():

@@ -1,6 +1,6 @@
-from functools import partial, wraps
 import asyncio
 import functools
+from functools import partial, wraps
 
 
 def executor(loop=None):

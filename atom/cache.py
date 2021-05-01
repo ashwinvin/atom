@@ -1,5 +1,6 @@
-from aiocache.backends.redis import RedisCache
 from collections import namedtuple
+
+from aiocache.backends.redis import RedisCache
 from aiocache.serializers import PickleSerializer
 
 
