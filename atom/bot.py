@@ -65,6 +65,11 @@ class Atom(commands.Bot):
         self.loop.create_task(self.cache_everything())
         self.logger = logger
 
+    async def close(self):
+        await super().close()
+        await self.db.close()
+        await self.http.close()
+
     async def recache_guild(self, guild_id):
         async with self.bot.db.acquire() as conn:
             async with conn.transaction():
