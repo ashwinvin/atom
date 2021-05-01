@@ -101,7 +101,6 @@ class GuildManagement(
                 return await ctx.send("Deletion Aborted")
 
         status = await asyncio.gather(*[emoji.delete() for emoji in emojis], return_exceptions=True)
-        print(status)
         await ctx.reply(f"Successfully deleted {len(emojis)} emojis")
 
 
