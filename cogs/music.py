@@ -26,12 +26,8 @@ class CPlayer(wavelink.Player):
     def build_embed(self, track):
 
         if isinstance(track, asyncspotify.FullPlaylist):
-            embed = discord.Embed(
-                colour=0xFFD105, title=f"Playlist - {track.name}", url=track.link
-            )
-            embed.add_field(
-                name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs"
-            )
+            embed = discord.Embed(colour=0xFFD105, title=f"Playlist - {track.name}", url=track.link)
+            embed.add_field(name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs")
             if image := track.images[0]:
                 embed.set_thumbnail(url=image.url)
 
@@ -50,12 +46,8 @@ class CPlayer(wavelink.Player):
                 embed.set_thumbnail(url=image.url)
 
         elif isinstance(track, wavelink.TrackPlaylist):
-            embed = discord.Embed(
-                colour=0xFFD105, title=track.data["playlistInfo"]["name"]
-            )
-            embed.add_field(
-                name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs"
-            )
+            embed = discord.Embed(colour=0xFFD105, title=track.data["playlistInfo"]["name"])
+            embed.add_field(name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs")
 
         else:
             embed = discord.Embed(colour=0xFFD105, title=track.title, url=track.uri)
@@ -92,11 +84,7 @@ class CPlayer(wavelink.Player):
 
         if not track:
             await self.stop()
-            return await self.ctx.send(
-                embed=discord.Embed(
-                    color=0xFFD105, description="Track not found! Skipping!!"
-                )
-            )
+            return await self.ctx.send(embed=discord.Embed(color=0xFFD105, description="Track not found! Skipping!!"))
 
         await self.play(track)
         self.now_playing = track
@@ -176,9 +164,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @wavelink.WavelinkMixin.listener(event="on_track_end")
     async def handle_track_end(self, node: Node, payload):
         player = payload.player
-        if isinstance(payload, wavelink.TrackStuck) or isinstance(
-            payload, wavelink.TrackException
-        ):
+        if isinstance(payload, wavelink.TrackStuck) or isinstance(payload, wavelink.TrackException):
             if player.queue.empty():
                 await player.ctx.send(
                     embed=discord.Embed(
@@ -251,9 +237,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                             await player.queue.put(
                                 f"ytsearch:{track.name} by {' '.join([author.name for author in track.artists])}"
                             )
-                        await ctx.send(
-                            embed=player.build_embed(playlist), delete_after=20
-                        )
+                        await ctx.send(embed=player.build_embed(playlist), delete_after=20)
                     except asyncspotify.exceptions.NotFound:
                         return await ctx.send(
                             embed=discord.Embed(

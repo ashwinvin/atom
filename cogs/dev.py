@@ -21,9 +21,7 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
         await message.edit(
             embed=self.bot.embed(
                 title="Ping Results",
-                description="Main API : {:.2f} ms \n Websocket {:.2f} ms".format(
-                    duration, self.bot.latency * 1000
-                ),
+                description="Main API : {:.2f} ms \n Websocket {:.2f} ms".format(duration, self.bot.latency * 1000),
             )
         )
 
@@ -38,11 +36,7 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
                     self.bot.reload_extension(cog)
                     temp.append(cog)
                 except commands.ExtensionNotFound:
-                    await ctx.send(
-                        embed=self.bot.embed(
-                            description=f"{cog} was not reloaded as it was not found"
-                        )
-                    )
+                    await ctx.send(embed=self.bot.embed(description=f"{cog} was not reloaded as it was not found"))
         else:
             cogs = list(self.bot.extensions.keys())
             for cog in cogs:
@@ -50,22 +44,14 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
                     continue
                 try:
                     oldHash = await self.bot.cache.get(cog.replace(".", "/") + ".py")
-                    newHash = hashlib.md5(
-                        str(open("./" + cog.replace(".", "/") + ".py").read()).encode(
-                            "utf-8"
-                        )
-                    ).hexdigest()
+                    newHash = hashlib.md5(str(open("./" + cog.replace(".", "/") + ".py").read()).encode("utf-8")).hexdigest()
                     if newHash == oldHash:
                         continue
                     self.bot.reload_extension(cog)
                     await self.bot.cache.set(cog.replace("./", ""), newHash)
                     temp.append(cog)
                 except commands.ExtensionNotFound:
-                    await ctx.send(
-                        embed=self.bot.embed(
-                            description=f"{cog} was not reloaded as it was not found"
-                        )
-                    )
+                    await ctx.send(embed=self.bot.embed(description=f"{cog} was not reloaded as it was not found"))
         description = ""
         await first.delete()
         for cog in temp:
