@@ -110,7 +110,7 @@ class Atom(commands.Bot):
                         guildIDs.remove(row["gid"])
                     else:
                         await conn.execute(
-                            "UPDATE SET kicked=$2 WHERE gid=$1",
+                            "UPDATE guilds SET kicked=$2 WHERE gid=$1",
                             row["gid"],
                             datetime.now(),
                         )
