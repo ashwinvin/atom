@@ -1,3 +1,4 @@
+import math
 import typing
 from discord.ext import commands
 import discord
@@ -49,6 +50,7 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
 
     @commands.command(help="Used to lock a channel")
     @commands.has_permissions(manage_channels=True)
+    @commands.bot_has_permissions(manage_channels=True)
     async def lock(self, ctx, channel: discord.TextChannel):
         roles = ctx.guild.roles
         lock_embed = self.bot.embed(
@@ -62,6 +64,7 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
 
     @commands.command(help="Used to unlock a channel after its been locked")
     @commands.has_permissions(manage_channels=True)
+    @commands.bot_has_permissions(manage_channels=True)
     async def unlock(self, ctx, channel: discord.TextChannel):
         roles = ctx.guild.roles
         lock_embed = self.bot.embed(
@@ -76,6 +79,7 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
 
     @commands.command(help="Set slowmode for a channel")
     @commands.has_permissions(manage_channels=True)
+    @commands.bot_has_permissions(manage_channels=True)
     async def slowmode(self, ctx, channel: typing.Optional[discord.TextChannel], time: int):
         if time > 21600:
             return await ctx.send("Time cannot be greater than 21600")
@@ -86,6 +90,7 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
 
     @commands.command(help="")
     @commands.has_permissions(manage_channels=True)
+    @commands.bot_has_permissions(manage_channels=True)
     async def nuke(self, ctx):
         def checkM(msg):
             return ctx.author == msg.author and msg.channel == ctx.channel
@@ -101,6 +106,18 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
 
         await ctx.channel.clone(reason=f"Requested by {ctx.author.name}#{ctx.author.discriminator}")
         await ctx.channel.delete(reason=f"Requested by {ctx.author.name}#{ctx.author.discriminator}")
+
+    @commands.command()
+    @commands.has_permissions(manage_channels=True)
+    @commands.bot_has_permissions(manage_channels=True)
+    async def purge(self, ctx: commands.Context, messages: int):
+        rem, actual = messages%100, math.floor(messages/100)
+        i = 0
+        cleaned = 0
+        while (i<actual):
+            cleaned += len(await ctx.channel.purge(limit=100, bulk=True))
+        cleaned += len(await ctx.channel.purge(limit=rem, bulk=True))
+        await ctx.send(f"Purged {cleaned} messages!")
 
 
 def setup(bot):
