@@ -42,7 +42,7 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
                 if cog == "jishaku":
                     continue
                 try:
-                    oldHash = await self.bot.cache.get(cog.replace(".", "/")+ ".py")
+                    oldHash = await self.bot.cache.get(cog.replace(".", "/") + ".py")
                     newHash = hashlib.md5(str(open("./" + cog.replace(".", "/") + ".py").read()).encode("utf-8")).hexdigest()
                     if newHash == oldHash:
                         continue

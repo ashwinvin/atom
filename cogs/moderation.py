@@ -111,10 +111,10 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
     async def purge(self, ctx: commands.Context, messages: int):
-        rem, actual = messages%100, math.floor(messages/100)
+        rem, actual = messages % 100, math.floor(messages / 100)
         i = 0
         cleaned = 0
-        while (i<actual):
+        while i < actual:
             cleaned += len(await ctx.channel.purge(limit=100, bulk=True))
         cleaned += len(await ctx.channel.purge(limit=rem, bulk=True))
         await ctx.send(f"Purged {cleaned} messages!")

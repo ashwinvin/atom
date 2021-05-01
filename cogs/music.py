@@ -26,12 +26,8 @@ class CPlayer(wavelink.Player):
     def build_embed(self, track):
 
         if isinstance(track, asyncspotify.FullPlaylist):
-            embed = discord.Embed(
-                colour=0xFFD105, title=f"Playlist - {track.name}", url=track.link
-            )
-            embed.add_field(
-                name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs"
-            )
+            embed = discord.Embed(colour=0xFFD105, title=f"Playlist - {track.name}", url=track.link)
+            embed.add_field(name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs")
             if image := track.images[0]:
                 embed.set_thumbnail(url=image.url)
 
@@ -47,12 +43,8 @@ class CPlayer(wavelink.Player):
                 embed.set_thumbnail(url=image.url)
 
         elif isinstance(track, wavelink.TrackPlaylist):
-            embed = discord.Embed(
-                colour=0xFFD105, title=track.data["playlistInfo"]["name"]
-            )
-            embed.add_field(
-                name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs"
-            )
+            embed = discord.Embed(colour=0xFFD105, title=track.data["playlistInfo"]["name"])
+            embed.add_field(name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs")
 
         else:
             embed = discord.Embed(colour=0xFFD105, title=track.title, url=track.uri)
@@ -125,7 +117,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             self.sauth = ClientCredentialsFlow(
                 client_id=config.SPOTIFY_ID,
                 client_secret=config.SPOTIFY_SECRET,
-            ) 
+            )
 
         self.check_dead_vc.start()
 
@@ -141,7 +133,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @tasks.loop(minutes=5)
     async def check_dead_vc(self):
         for player in self.wavelink.players.values():
-            members = self.bot.get_channel(player.channel_id).members 
+            members = self.bot.get_channel(player.channel_id).members
             if members and len(members) == 1:
                 await player.ctx.send(
                     embed=discord.Embed(
@@ -169,9 +161,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @wavelink.WavelinkMixin.listener(event="on_track_end")
     async def handle_track_end(self, node: Node, payload):
         player = payload.player
-        if isinstance(payload, wavelink.TrackStuck) or isinstance(
-            payload, wavelink.TrackException
-        ):
+        if isinstance(payload, wavelink.TrackStuck) or isinstance(payload, wavelink.TrackException):
             if player.queue.empty():
                 await player.ctx.send(
                     embed=discord.Embed(
@@ -224,9 +214,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 async with Client(self.sauth) as sess:
                     try:
                         track = await sess.get_track(track.group(1))
-                        await player.queue.put(f"ytsearch:{track.name} by {' '.join([author.name for author in track.artists])}")
+                        await player.queue.put(
+                            f"ytsearch:{track.name} by {' '.join([author.name for author in track.artists])}"
+                        )
                     except asyncspotify.exceptions.NotFound:
-                        return await ctx.send(embed=discord.Embed(color=0xFFD105, description="Requested spotify playlist not found!"))
+                        return await ctx.send(
+                            embed=discord.Embed(color=0xFFD105, description="Requested spotify playlist not found!")
+                        )
 
             elif tracks := PLAYLIST_REGEX.match(search):
 
@@ -234,10 +228,14 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                     try:
                         playlist = await sess.get_playlist(tracks.group(1))
                         async for track in playlist:
-                            await player.queue.put(f"ytsearch:{track.name} by {' '.join([author.name for author in track.artists])}")
+                            await player.queue.put(
+                                f"ytsearch:{track.name} by {' '.join([author.name for author in track.artists])}"
+                            )
                         await ctx.send(embed=player.build_embed(playlist), delete_after=20)
                     except asyncspotify.exceptions.NotFound:
-                        return await ctx.send(embed=discord.Embed(color=0xFFD105, description="Requested spotify playlist not found!"))
+                        return await ctx.send(
+                            embed=discord.Embed(color=0xFFD105, description="Requested spotify playlist not found!")
+                        )
 
             elif tracks := await self.wavelink.get_tracks(query=search):
 
