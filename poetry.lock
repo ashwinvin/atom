@@ -72,6 +72,17 @@ docs = ["Sphinx (>=1.7.3,<1.8.0)", "sphinxcontrib-asyncio (>=0.2.0,<0.3.0)", "sp
 test = ["pycodestyle (>=2.5.0,<2.6.0)", "flake8 (>=3.7.9,<3.8.0)", "uvloop (>=0.14.0,<0.15.0)"]
 
 [[package]]
+name = "asyncspotify"
+version = "0.12.1"
+description = "Spotify Web API implementation that is fully asynchronous and object-oriented."
+category = "main"
+optional = false
+python-versions = ">=3.5.2"
+
+[package.dependencies]
+aiohttp = ">=3.6.0"
+
+[[package]]
 name = "attrs"
 version = "20.3.0"
 description = "Classes Without Boilerplate"
@@ -587,7 +598,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "f5a46fbc158f50ec69ebd19b7a3b50547b9e8b52b419d0e694386048c1c48167"
+content-hash = "002bbec3b13f0efa0aa30782bdf277118625311c36b0fba1b65ed5e61593df85"
 
 [metadata.files]
 aiocache = [
@@ -661,6 +672,10 @@ asyncpg = [
     {file = "asyncpg-0.22.0-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:2cb730241dfe650b9626eae00490cca4cfeb00871ed8b8f389f3a4507b328683"},
     {file = "asyncpg-0.22.0-cp39-cp39-win_amd64.whl", hash = "sha256:2e3875c82ae609b21e562e6befdc35e52c4290e49d03e7529275d59a0595ca97"},
     {file = "asyncpg-0.22.0.tar.gz", hash = "sha256:348ad471d9bdd77f0609a00c860142f47c81c9123f4064d13d65c8569415d802"},
+]
+asyncspotify = [
+    {file = "asyncspotify-0.12.1-py3-none-any.whl", hash = "sha256:b7fc166836a6a239ff761725de916b26b81c824f570bd1572490b5a7e23851de"},
+    {file = "asyncspotify-0.12.1.tar.gz", hash = "sha256:9e469633d5e3974b67214a00e9689c61c6ff4ded64bbac2c42f81107d9042d50"},
 ]
 attrs = [
     {file = "attrs-20.3.0-py2.py3-none-any.whl", hash = "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6"},
