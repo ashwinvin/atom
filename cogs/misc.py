@@ -114,6 +114,17 @@ class Miscellaneous(commands.Cog):
             ),
         )
         await ctx.reply(embed=embed)
+    
+    @commands.command()
+    async def info(self, ctx: commands.Context):
+        guild = await self.bot.cache.get(ctx.guild.id)
+        embed = discord.Embed(color=0xFFD105, title="Atom Info")
+        embed.add_field(name="Guilds",value= f"{len(self.bot.guilds)}")
+        embed.add_field(name="Users", value=f"{len(self.bot.users)}")
+        embed.add_field(name="Channels", value=f"{len(list(self.bot.get_all_channels()))}")
+        embed.add_field(name="Total Commands", value=f"{len(self.bot.commands)} commands")
+        embed.add_field(name="Prefix", value=guild.prefix)
+        await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):
