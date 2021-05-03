@@ -55,7 +55,7 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
     async def lock(self, ctx, channels: commands.Greedy[discord.TextChannel]):
         roles = ctx.guild.roles
         if not channels:
-            channels = [ctx.channel] 
+            channels = [ctx.channel]
         for channel in channels:
             lock_embed = self.bot.embed(
                 title="Locked",
@@ -72,7 +72,7 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
     async def unlock(self, ctx, channels: commands.Greedy[discord.TextChannel]):
         roles = ctx.guild.roles
         if not channels:
-            channels = [ctx.channel] 
+            channels = [ctx.channel]
         for channel in channels:
             lock_embed = self.bot.embed(
                 title="Unlocked",
@@ -128,7 +128,6 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
             pass
         await ctx.send(f"Purged {cleaned} messages!")
 
-
     @purge.command()
     async def bots(self, ctx: commands.Context, messages: int):
         rem, actual = messages % 100, math.floor(messages / 100)
@@ -140,7 +139,7 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
         except discord.Forbidden:
             pass
         await ctx.send(f"Purged {cleaned} messages!")
-    
+
     @purge.command()
     async def users(self, ctx: commands.Context, messages: int):
         rem, actual = messages % 100, math.floor(messages / 100)

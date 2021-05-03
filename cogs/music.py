@@ -5,7 +5,7 @@ import typing
 import async_timeout
 import asyncspotify
 import discord
-import wavelink 
+import wavelink
 from asyncspotify import Client, ClientCredentialsFlow
 from discord.ext import commands, tasks
 from wavelink.node import Node
