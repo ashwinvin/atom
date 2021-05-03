@@ -10,7 +10,7 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
         self.bot = bot
         self.emoji = 836839655789822012
 
-    @commands.has_permissions(ban_members=True)
+    @commands.has_guild_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.command()
     async def ban(self, ctx, users: commands.Greedy[discord.Member], *reason: str):
@@ -52,31 +52,37 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
     @commands.command(help="Used to lock a channel")
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
-    async def lock(self, ctx, channel: discord.TextChannel):
+    async def lock(self, ctx, channels: commands.Greedy[discord.TextChannel]):
         roles = ctx.guild.roles
-        lock_embed = self.bot.embed(
-            title="Locked",
-            description=f"This channel is locked by {ctx.message.author}",
-            color=0xEB984E,
-        )
-        await channel.send(embed=lock_embed)
-        for role in roles:
-            await channel.set_permissions(role, send_messages=False, reason=f"Done by {ctx.message.author}")
+        if not channels:
+            channels = [ctx.channel] 
+        for channel in channels:
+            lock_embed = self.bot.embed(
+                title="Locked",
+                description=f"This channel is locked by {ctx.message.author}",
+                color=0xEB984E,
+            )
+            await channel.send(embed=lock_embed)
+            for role in roles:
+                await channel.set_permissions(role, send_messages=False, reason=f"Done by {ctx.message.author}")
 
     @commands.command(help="Used to unlock a channel after its been locked")
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
-    async def unlock(self, ctx, channel: discord.TextChannel):
+    async def unlock(self, ctx, channels: commands.Greedy[discord.TextChannel]):
         roles = ctx.guild.roles
-        lock_embed = self.bot.embed(
-            title="Locked",
-            description=f"This channel is now unlocked by {ctx.message.author}",
-            color=0xEB984E,
-        )
-        await channel.send(embed=lock_embed)
+        if not channels:
+            channels = [ctx.channel] 
+        for channel in channels:
+            lock_embed = self.bot.embed(
+                title="Unlocked",
+                description=f"This channel is now unlocked by {ctx.message.author}",
+                color=0xEB984E,
+            )
+            await channel.send(embed=lock_embed)
 
-        for role in roles:
-            await channel.set_permissions(role, send_messages=True, reason=f"Done by {ctx.message.author}")
+            for role in roles:
+                await channel.set_permissions(role, send_messages=True, reason=f"Done by {ctx.message.author}")
 
     @commands.command(help="Set slowmode for a channel")
     @commands.has_permissions(manage_channels=True)
@@ -108,16 +114,43 @@ class Moderation(commands.Cog, name="Moderation", description="Module for server
         await ctx.channel.clone(reason=f"Requested by {ctx.author.name}#{ctx.author.discriminator}")
         await ctx.channel.delete(reason=f"Requested by {ctx.author.name}#{ctx.author.discriminator}")
 
-    @commands.command()
+    @commands.group()
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
     async def purge(self, ctx: commands.Context, messages: int):
         rem, actual = messages % 100, math.floor(messages / 100)
         i = 0
         cleaned = 0
-        while i < actual:
-            cleaned += len(await ctx.channel.purge(limit=100, bulk=True))
-        cleaned += len(await ctx.channel.purge(limit=rem, bulk=True))
+        try:
+            while i < actual:
+                cleaned += len(await ctx.channel.purge(limit=rem, bulk=True))
+        except discord.Forbidden:
+            pass
+        await ctx.send(f"Purged {cleaned} messages!")
+
+
+    @purge.command()
+    async def bots(self, ctx: commands.Context, messages: int):
+        rem, actual = messages % 100, math.floor(messages / 100)
+        i = 0
+        cleaned = 0
+        try:
+            while i < actual:
+                cleaned += len(await ctx.channel.purge(limit=rem, bulk=True, check=lambda m: m.author.bot))
+        except discord.Forbidden:
+            pass
+        await ctx.send(f"Purged {cleaned} messages!")
+    
+    @purge.command()
+    async def users(self, ctx: commands.Context, messages: int):
+        rem, actual = messages % 100, math.floor(messages / 100)
+        i = 0
+        cleaned = 0
+        try:
+            while i < actual:
+                cleaned += len(await ctx.channel.purge(limit=rem, bulk=True, check=lambda m: not m.author.bot))
+        except discord.Forbidden:
+            pass
         await ctx.send(f"Purged {cleaned} messages!")
 
 
