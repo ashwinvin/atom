@@ -133,31 +133,79 @@ class Atom(commands.Bot):
             await self.cache.add(ext, hash)
         self.logger.info("Successfully cached everything")
 
+
+    async def handle_misc_error(self, ctx: commands.Context, error):
+        async def send_error(title,msg):
+            if commands.has_permissions(embed_links=True):
+                err_embed = discord.Embed(title=title, description=msg, color=0xFF0000)
+                await ctx.send(embed=err_embed)
+            else:
+                await ctx.send(msg)
+
+        if isinstance(
+            error,
+            (
+                commands.TooManyArguments,
+                commands.GuildNotFound,
+                commands.ChannelNotFound,
+                commands.ChannelNotReadable,
+            ),
+        ):
+            return
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await send_error(
+                title="Missing Argument",msg=f"{ctx.command.qualified_name} requires {error.param}!!"
+            )
+
+        if isinstance(error, commands.DisabledCommand):
+            await send_error(title="Disabled", msg=f"{ctx.command} has been disabled by the dev!!")
+
+        if isinstance(error, commands.MemberNotFound):
+            return await send_error(title="Not Found", msg=f"Member `{error.argument}` not found!!")
+
+        if isinstance(error, commands.RoleNotFound):
+            return await send_error(title="Not Found", msg=f"Role {error.argument} not found!!")
+
+        if isinstance(error, commands.MissingPermissions):
+            newLine = '\n'
+            await send_error(title="Missing Permissions", msg=f"You are missing the following permissions to run the command \n ```diff\n{newLine.join(['- ' + perm.upper().replace('_', ' ') for perm in error.missing_perms])}``` ")
+            return 
+        
+        if isinstance(error, commands.BotMissingPermissions):
+            newLine = '\n'
+            return await send_error(title="Missing Permissions", msg=f"I need the following permissions to run the command \n ```diff\n{newLine.join(['- ' +perm.upper().replace('_', ' ') for perm in error.missing_perms])}``` ")
+
+        if issubclass(error.__class__, (commands.UserInputError, commands.ConversionError)):
+            return await send_error(title="Invalid Arguments", msg="Please provide valid arguments !!")
+
     async def on_command_error(self, ctx, exc):
         if hasattr(ctx.command, "on_error"):
             return
+
+        error = getattr(exc, "original", exc)
+        await self.handle_misc_error(ctx, error)
+
 
         ignored = (
             commands.CommandNotFound,
             commands.MissingRequiredArgument,
             commands.MissingPermissions,
             commands.NotOwner,
+            commands.RoleNotFound,
+            commands.TooManyArguments,
+            commands.GuildNotFound,
+            commands.ChannelNotFound,
+            commands.ChannelNotReadable,
+            commands.MemberNotFound,
+            commands.UserInputError,
+            commands.ConversionError,
+            commands.BotMissingPermissions
         )
 
-        error = getattr(exc, "original", exc)
+
         if isinstance(error, ignored):
             return
-
-        if isinstance(error, commands.DisabledCommand):
-            await ctx.send(f"{ctx.command} has been disabled.")
-            return
-
-        elif isinstance(error, commands.NoPrivateMessage):
-            try:
-                await ctx.author.send(f"{ctx.command} can not be used in Private Messages.")
-                return
-            except discord.HTTPException:
-                pass
 
         error = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
         async with aiohttp.ClientSession() as session:
@@ -192,3 +240,4 @@ class Atom(commands.Bot):
     async def on_error(self, event_method, *args, **kwargs):
         logger.error("Ignoring exception in {}".format(event_method), file=sys.stderr)
         traceback.print_exc()
+
