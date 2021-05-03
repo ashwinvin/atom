@@ -5,7 +5,7 @@ import typing
 import async_timeout
 import asyncspotify
 import discord
-import wavelink
+import wavelink 
 from asyncspotify import Client, ClientCredentialsFlow
 from discord.ext import commands, tasks
 from wavelink.node import Node
@@ -18,6 +18,7 @@ PLAYLIST_REGEX = re.compile(r"https://open\.spotify\.com/playlist/(\S+)\?si=\S*"
 class CPlayer(wavelink.Player):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.dj = None
         self.queue = asyncio.Queue()
         self.waiting = False
         self.ctx = kwargs.get("ctx")
@@ -27,7 +28,7 @@ class CPlayer(wavelink.Player):
 
         if isinstance(track, asyncspotify.FullPlaylist):
             embed = discord.Embed(colour=0xFFD105, title=f"Playlist - {track.name}", url=track.link)
-            embed.add_field(name="Queued", value=f"{len(track.tracks)+self.queue.qsize()} songs")
+            embed.add_field(name="Queued", value=f"{self.queue.qsize()} songs")
             if image := track.images[0]:
                 embed.set_thumbnail(url=image.url)
 
@@ -94,10 +95,10 @@ class CPlayer(wavelink.Player):
 class Music(commands.Cog, wavelink.WavelinkMixin):
     """Music Cog."""
 
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
+    def __init__(self, bot):
         self.emoji = 836841369565134858
-        bot.loop.create_task(self.connect_node())
+        self.bot = bot
+        self.bot.loop.create_task(self.connect_node())
 
     async def connect_node(self):
         # Why here? This is here to stop aiohttp whining about initializing in a non async function
@@ -123,11 +124,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             )
 
         self.check_dead_vc.start()
-
-    async def cog_command_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            if error.param == "Voice Channel":
-                return await ctx.reply("Please specify a voice channel or join on!")
 
     @wavelink.WavelinkMixin.listener()
     async def on_node_ready(self, node: Node):
@@ -155,9 +151,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if member == self.bot.user and not after.channel:
             await player.destroy()
 
-        if member == self.bot.user:
-            if not after.deaf:
-                await member.edit(deafen=True)
+        # if member == self.bot.user:
+        #     if not after.deaf:
+        #         await member.edit(deafen=True)
 
     @wavelink.WavelinkMixin.listener(event="on_track_exception")
     @wavelink.WavelinkMixin.listener(event="on_track_stuck")
@@ -186,7 +182,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         else:
             await player.play_next()
 
-    @commands.command(alias=["c"])
+    @commands.command(aliases=["c"])
     async def connect(self, ctx, channel: typing.Optional[discord.VoiceChannel] = None):
         player = self.wavelink.get_player(ctx.guild.id, cls=CPlayer, ctx=ctx)
 
@@ -195,7 +191,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         channel = getattr(ctx.author.voice, "channel", channel)
         if not channel:
-            raise commands.MissingRequiredArgument("Voice Channel")
+            return await ctx.send("Please connect to channel or provide a channel to connect")
 
         await ctx.send(
             embed=discord.Embed(color=0xFFD105, description=f"Joining {channel.name}"),
@@ -204,11 +200,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await player.connect(channel.id)
         await ctx.me.edit(deafen=True)
 
-    @commands.command(alias=["p"])
+    @commands.command(aliases=["p"])
     async def play(self, ctx, *, search: str):
         player = self.wavelink.get_player(ctx.guild.id, cls=CPlayer, ctx=ctx)
         playlist = None
+
         if not player.is_connected:
+            player.dj = ctx.author
             await ctx.invoke(self.connect)
 
         if URL_REGEX.match(search):
@@ -265,7 +263,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not player.is_playing:
             await player.play_next()
 
-    @commands.command(alias=["s"])
+    @commands.command(aliases=["s"])
     async def skip(self, ctx):
         player = self.wavelink.get_player(ctx.guild.id, cls=CPlayer, ctx=ctx)
         await player.stop()
@@ -283,7 +281,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             delete_after=10,
         )
 
-    @commands.command(alias=["v"])
+    @commands.command(aliases=["v"])
     async def volume(self, ctx, amount: int):
         player = self.wavelink.get_player(ctx.guild.id, cls=CPlayer, ctx=ctx)
         await player.set_volume(amount)
@@ -292,7 +290,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             delete_after=10,
         )
 
-    @commands.command(alias=["dc", "stop"])
+    @commands.command(aliases=["dc", "stop"])
     async def leave(self, ctx):
         player = self.wavelink.get_player(ctx.guild.id, cls=CPlayer, ctx=ctx)
         await player.destroy()
@@ -301,7 +299,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             delete_after=10,
         )
 
-    @commands.command(alias=["continue"])
+    @commands.command(aliases=["continue"])
     async def resume(self, ctx):
         player = self.wavelink.get_player(ctx.guild.id, cls=CPlayer, ctx=ctx)
         await player.set_pause(False)
@@ -312,4 +310,4 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(Music(bot))
+    bot.add_cog(Music(bot=bot))
